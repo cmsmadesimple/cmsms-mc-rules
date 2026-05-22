@@ -1,0 +1,36 @@
+{
+  "rule_id": "CMSMS_CMS_025",
+  "title": "PHP file missing license header comment",
+  "category": "cmsms",
+  "severity": "info",
+  "confidence": "medium",
+  "score": 1,
+  "description": "A module PHP file does not contain a license header reference in the first few lines. This is a documentation best practice, not a security issue.",
+  "detection": {
+    "type": "heuristic",
+    "patterns": []
+  },
+  "context": [
+    "documentation",
+    "licensing"
+  ],
+  "requires": [
+    "missing_license_header"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "Every PHP file in a CMSMS module should include a license header comment near the top referencing the doc/LICENSE file. This ensures legal clarity for anyone reading or reusing the code. The standard header is: #-- See LICENSE for full license information. --#",
+  "fix": "Add the license header after the opening <?php tag:\n<?php\n#--------------------------------------------------\n# See LICENSE for full license information.\n#--------------------------------------------------",
+  "examples": {
+    "bad": "<?php\nif (!defined('CMS_VERSION')) exit;\n$db = cmsms()->GetDb();",
+    "good": "<?php\n#--------------------------------------------------\n# See LICENSE for full license information.\n#--------------------------------------------------\nif (!defined('CMS_VERSION')) exit;\n$db = cmsms()->GetDb();"
+  },
+  "tags": [
+    "compliance",
+    "licensing",
+    "header"
+  ],
+  "version": "1.0",
+  "enabled": true
+}

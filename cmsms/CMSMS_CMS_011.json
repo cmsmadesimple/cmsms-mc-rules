@@ -1,0 +1,48 @@
+{
+  "rule_id": "CMSMS_CMS_011",
+  "title": "Template variable output without |escape modifier",
+  "category": "cmsms",
+  "severity": "medium",
+  "confidence": "medium",
+  "description": "Disabled: In CMSMS, all Smarty variables are assigned server-side via $smarty->assign(). The |escape modifier is an HTML encoder (converts & \" ' < > to entities) and is only useful when the variable contains user-submitted free-text. Static pattern matching cannot distinguish between {$user_comment} (needs escaping) and {$api_key} (does not). XSS prevention belongs in the PHP layer where the data origin is known, not blanket-applied in templates.",
+  "detection": {
+    "type": "pattern",
+    "patterns": [
+      "(?:value|title|alt|placeholder|data-\\w+)\\s*=\\s*['\"]\\{\\$\\w+\\}['\"]"
+    ]
+  },
+  "context": [
+    "output",
+    "template"
+  ],
+  "requires": [
+    "unescaped_variable_in_html_attribute"
+  ],
+  "applies_to": [
+    "tpl"
+  ],
+  "explanation": "Variables rendered inside HTML attribute values without |escape can break out of the attribute and inject event handlers. However, in CMSMS all template variables are server-assigned and typically already sanitized or contain controlled-format data (keys, IDs, etc.). This rule produces excessive false positives without data-flow analysis.",
+  "fix": "Add |escape: {$variable|escape} or {$variable|escape:'htmlall'}.",
+  "examples": {
+    "bad": "<input type=\"text\" value=\"{$item_name}\">\n<a title=\"{$description}\">",
+    "good": "<input type=\"text\" value=\"{$item_name|escape}\">\n<a title=\"{$description|escape}\">"
+  },
+  "exclude_if": [
+    {
+      "type": "regex",
+      "value": "\\|escape"
+    },
+    {
+      "type": "regex",
+      "value": "\\|htmlspecialchars"
+    }
+  ],
+  "tags": [
+    "xss",
+    "template",
+    "output"
+  ],
+  "version": "1.0",
+  "enabled": false,
+  "score": 5
+}

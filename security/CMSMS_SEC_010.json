@@ -1,0 +1,38 @@
+{
+  "rule_id": "CMSMS_SEC_010",
+  "title": "eval() with variable argument",
+  "category": "security",
+  "severity": "high",
+  "confidence": "high",
+  "score": 10,
+  "description": "eval() is called with a variable or expression argument, enabling arbitrary code execution.",
+  "detection": {
+    "type": "pattern",
+    "patterns": [
+      "\\beval\\s*\\(\\s*\\$\\w+",
+      "\\beval\\s*\\(\\s*['\"][^'\"]*\\$\\w+",
+      "\\beval\\s*\\([^)]*\\$_(GET|POST|REQUEST)"
+    ]
+  },
+  "context": [
+    "code_execution"
+  ],
+  "requires": [
+    "dynamic_code_evaluation"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "eval() executes its string argument as PHP. Any variable content leads directly to Remote Code Execution.",
+  "fix": "Eliminate eval(). Use callbacks, match expressions, or configuration arrays.",
+  "examples": {
+    "bad": "eval('$result = ' . $params['formula'] . ';');",
+    "good": "$formulas = ['sum' => fn($a, $b) => $a + $b];\n$result = ($formulas[$params['formula']] ?? fn() => 0)($a, $b);"
+  },
+  "tags": [
+    "rce",
+    "dangerous-function"
+  ],
+  "version": "1.0",
+  "enabled": true
+}

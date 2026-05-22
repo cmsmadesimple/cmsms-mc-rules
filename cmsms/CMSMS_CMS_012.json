@@ -1,0 +1,41 @@
+{
+  "rule_id": "CMSMS_CMS_012",
+  "title": "Smarty {php} tag in template",
+  "category": "cmsms",
+  "severity": "high",
+  "confidence": "high",
+  "description": "A template uses {php}...{/php} tags to embed PHP code, which is deprecated/removed in Smarty 3+/4+ and violates separation of concerns.",
+  "detection": {
+    "type": "pattern",
+    "patterns": [
+      "\\{\\s*php\\s*\\}",
+      "\\{\\s*/\\s*php\\s*\\}",
+      "\\{include_php\\b"
+    ]
+  },
+  "context": [
+    "template",
+    "code_execution"
+  ],
+  "requires": [
+    "php_in_template"
+  ],
+  "applies_to": [
+    "tpl"
+  ],
+  "explanation": "{php} tags execute arbitrary PHP in the template layer. They're deprecated in Smarty 3, removed in Smarty 4/5, and are a security/maintenance liability.",
+  "fix": "Move all logic to the action file or a module method. Pass computed values to the template via $smarty->assign().",
+  "examples": {
+    "bad": "{php}\n  $db = cmsms()->GetDb();\n  echo $db->GetOne('SELECT COUNT(*) FROM items');\n{/php}",
+    "good": "{* Assigned in action: $tpl->assign('count', $count); *}\n<p>Total: {$count}</p>"
+  },
+  "tags": [
+    "template",
+    "deprecated",
+    "security",
+    "smarty"
+  ],
+  "version": "1.0",
+  "enabled": true,
+  "score": 7
+}

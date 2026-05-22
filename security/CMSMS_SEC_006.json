@@ -1,0 +1,45 @@
+{
+  "rule_id": "CMSMS_SEC_006",
+  "title": "SQL query with concatenated variable after WHERE/SET/VALUES",
+  "category": "security",
+  "severity": "high",
+  "confidence": "high",
+  "description": "A PHP variable is concatenated into a SQL string in a WHERE, SET, or VALUES clause — the exact positions where injection occurs.",
+  "detection": {
+    "type": "heuristic",
+    "patterns": []
+  },
+  "context": [
+    "sql"
+  ],
+  "requires": [
+    "variable_in_sql_clause"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "Variables concatenated into WHERE/SET/VALUES clauses are the primary SQL injection vector. CMS_DB_PREFIX concatenation in FROM clauses is safe and excluded.",
+  "fix": "Replace the concatenated variable with a ? placeholder and add the value to the parameter array.",
+  "examples": {
+    "bad": "$db->Execute('UPDATE ' . CMS_DB_PREFIX . 'items SET name = \\'' . $name . '\\' WHERE id = ' . $id);",
+    "good": "$db->Execute('UPDATE ' . CMS_DB_PREFIX . 'items SET name = ? WHERE id = ?', [$name, $id]);"
+  },
+  "exclude_if": [
+    {
+      "type": "regex",
+      "value": "\\.\\s*(?:CMS_DB_PREFIX|cms_db_prefix\\s*\\()\\s*\\."
+    },
+    {
+      "type": "regex",
+      "value": "\\?[^.]*,\\s*\\["
+    }
+  ],
+  "tags": [
+    "sql",
+    "injection",
+    "db"
+  ],
+  "version": "1.0",
+  "enabled": true,
+  "score": 10
+}

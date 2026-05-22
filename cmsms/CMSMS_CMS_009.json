@@ -1,0 +1,45 @@
+{
+  "rule_id": "CMSMS_CMS_009",
+  "title": "Raw HTML <form> in frontend template instead of {form_start}",
+  "category": "cmsms",
+  "severity": "medium",
+  "confidence": "high",
+  "description": "A frontend Smarty template uses a raw <form> tag with a hardcoded action URL instead of CMSMS's {form_start} which handles routing, CSRF tokens, and hidden fields. Admin templates are excluded because the admin framework provides its own form handling.",
+  "detection": {
+    "type": "pattern",
+    "patterns": [
+      "<form\\s+[^>]*action\\s*=\\s*['\"][^{][^'\"]*['\"]",
+      "<form\\s+[^>]*method\\s*=\\s*['\"]post['\"][^>]*>(?!.*\\{csrf)"
+    ]
+  },
+  "context": [
+    "template",
+    "csrf"
+  ],
+  "requires": [
+    "raw_form_in_template"
+  ],
+  "applies_to": [
+    "tpl"
+  ],
+  "explanation": "Raw <form> tags bypass CMSMS's action routing and CSRF protection. {form_start} automatically includes the module action, return ID, and CSRF token.",
+  "fix": "Replace <form> with {form_start action='myaction'} and </form> with {form_end}.",
+  "examples": {
+    "bad": "<form action=\"moduleinterface.php\" method=\"post\">\n  <input type=\"hidden\" name=\"mact\" value=\"MyModule,cntnt01,submit,0\">\n</form>",
+    "good": "{form_start action='submit'}\n  {* fields *}\n{form_end}"
+  },
+  "exclude_if": [
+    {
+      "type": "filename_regex",
+      "value": "(?:admin|defaultadmin|admin_)"
+    }
+  ],
+  "tags": [
+    "forms",
+    "template",
+    "csrf",
+    "routing"
+  ],
+  "enabled": true,
+  "score": 5
+}

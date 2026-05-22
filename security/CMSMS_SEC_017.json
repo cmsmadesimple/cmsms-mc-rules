@@ -1,0 +1,49 @@
+{
+  "rule_id": "CMSMS_SEC_017",
+  "title": "Header injection via user input in header()",
+  "category": "security",
+  "severity": "high",
+  "confidence": "high",
+  "score": 8,
+  "description": "PHP header() function uses user input, enabling HTTP response splitting or open redirect.",
+  "detection": {
+    "type": "pattern",
+    "patterns": [
+      "\\bheader\\s*\\(\\s*['\"]Location:\\s*['\"]\\s*\\.\\s*\\$_(GET|POST|REQUEST)\\s*\\[",
+      "\\bheader\\s*\\(\\s*[^)]*\\$_(GET|POST|REQUEST)\\s*\\[",
+      "\\bheader\\s*\\(\\s*['\"]Location:\\s*['\"]\\s*\\.\\s*\\$params\\s*\\["
+    ]
+  },
+  "context": [
+    "output"
+  ],
+  "requires": [
+    "user_input_flow"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "User input in HTTP headers enables response splitting or open redirects.",
+  "fix": "Validate the URL against an allowlist. Use CMSMS's $this->RedirectToAdminTab() for admin redirects.",
+  "examples": {
+    "bad": "header('Location: ' . $_GET['return_url']);",
+    "good": "$this->RedirectToAdminTab($id);"
+  },
+  "exclude_if": [
+    {
+      "type": "contains",
+      "value": "filter_var("
+    },
+    {
+      "type": "contains",
+      "value": "RedirectToAdminTab("
+    }
+  ],
+  "tags": [
+    "header-injection",
+    "open-redirect",
+    "input"
+  ],
+  "version": "1.0",
+  "enabled": true
+}

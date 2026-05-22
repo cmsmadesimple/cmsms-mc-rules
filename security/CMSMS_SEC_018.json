@@ -1,0 +1,40 @@
+{
+  "rule_id": "CMSMS_SEC_018",
+  "title": "Code obfuscation tool detected",
+  "category": "security",
+  "severity": "high",
+  "confidence": "high",
+  "score": 9,
+  "description": "The file contains signatures of a PHP code obfuscation/encoding tool (Zend Guard, SourceGuardian, ionCube). Obfuscated code cannot be reviewed for security and is not permitted.",
+  "detection": {
+    "type": "pattern",
+    "patterns": [
+      "(?:\\<\\?php \\@Zend;)|(?:This file was encoded by)",
+      "(?:sourceguardian\\.com)|(?:function_exists\\s*\\(\\s*['\"]sg_load['\"]\\s*\\))|(?:\\$__x=)",
+      "\\bionCube\\b"
+    ]
+  },
+  "context": [
+    "security",
+    "obfuscation"
+  ],
+  "requires": [
+    "obfuscated_code"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "Obfuscated/encoded PHP code hides its true functionality, making security review impossible. Modules distributed for CMSMS must have readable, reviewable source code. Zend Guard, SourceGuardian, and ionCube encoded files are not permitted.",
+  "fix": "Distribute the original unencoded PHP source code. If you need to protect intellectual property, use a license key system instead of code obfuscation.",
+  "examples": {
+    "bad": "<?php @Zend; // encoded file",
+    "good": "<?php\n// Readable, reviewable source code"
+  },
+  "tags": [
+    "obfuscation",
+    "security",
+    "review"
+  ],
+  "version": "1.0",
+  "enabled": true
+}

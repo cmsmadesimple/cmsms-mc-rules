@@ -1,0 +1,47 @@
+{
+  "rule_id": "CMSMS_QUAL_012",
+  "title": "Localhost or loopback URL hardcoded",
+  "category": "quality",
+  "severity": "medium",
+  "confidence": "high",
+  "score": 4,
+  "description": "The file contains a hardcoded localhost, 127.0.0.1, or loopback URL that should be removed before distribution.",
+  "detection": {
+    "type": "pattern",
+    "patterns": [
+      "https?://localhost\\b",
+      "https?://127\\.0\\.0\\.1\\b",
+      "https?://0\\.0\\.0\\.0\\b",
+      "https?://\\[::1\\]"
+    ]
+  },
+  "context": [
+    "localhost",
+    "distribution"
+  ],
+  "requires": [
+    "hardcoded_localhost"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "Hardcoded localhost URLs are development leftovers that will fail on any other environment. They may also leak internal service endpoints or development infrastructure details.",
+  "fix": "Remove hardcoded localhost URLs. Use CMSMS configuration values, site preferences, or relative URLs instead.",
+  "examples": {
+    "bad": "$api = 'http://localhost:8080/api/check';",
+    "good": "$api = $this->GetPreference('mymodule_api_url', '');"
+  },
+  "exclude_if": [
+    {
+      "type": "regex",
+      "value": "^\\s*(?://|#|\\*)"
+    }
+  ],
+  "tags": [
+    "localhost",
+    "distribution",
+    "development"
+  ],
+  "version": "1.0",
+  "enabled": true
+}

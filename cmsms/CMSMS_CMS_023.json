@@ -1,0 +1,50 @@
+{
+  "rule_id": "CMSMS_CMS_023",
+  "title": "PHP file missing CMS_VERSION direct access guard",
+  "category": "cmsms",
+  "severity": "high",
+  "confidence": "high",
+  "score": 6,
+  "description": "A module PHP file does not check for defined('CMS_VERSION') at the top, allowing it to be accessed directly via URL and potentially exposing errors, paths, or partial execution.",
+  "detection": {
+    "type": "heuristic",
+    "patterns": []
+  },
+  "context": [
+    "security",
+    "compliance"
+  ],
+  "requires": [
+    "missing_direct_access_guard"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "Every module PHP file (action files, method files, lib classes) must prevent direct browser access. Without the CMS_VERSION guard, requesting the file directly can trigger PHP errors that reveal file paths, class structures, or partial logic execution. The main .module.php file is excluded because it extends CMSModule which handles this internally.",
+  "fix": "Add this line at the top of the file, after the opening <?php tag and any comments: if (!defined('CMS_VERSION')) exit;",
+  "examples": {
+    "bad": "<?php\n// action.defaultadmin.php\n$db = cmsms()->GetDb();",
+    "good": "<?php\nif (!defined('CMS_VERSION')) exit;\n$db = cmsms()->GetDb();"
+  },
+  "exclude_if": [
+    {
+      "type": "filename_regex",
+      "value": "\\.module\\.php$"
+    },
+    {
+      "type": "contains",
+      "value": "if (!cmsms()) exit"
+    },
+    {
+      "type": "regex",
+      "value": "if\\s*\\(\\s*!\\s*cmsms\\s*\\(\\s*\\)\\s*\\)\\s*exit"
+    }
+  ],
+  "tags": [
+    "security",
+    "direct-access",
+    "compliance"
+  ],
+  "version": "1.0",
+  "enabled": true
+}

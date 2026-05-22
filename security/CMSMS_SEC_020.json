@@ -1,0 +1,34 @@
+{
+  "rule_id": "CMSMS_SEC_020",
+  "title": "Dangerous function used (shell execution or obfuscation)",
+  "category": "security",
+  "severity": "high",
+  "confidence": "high",
+  "description": "Functions like passthru(), proc_open(), dl(), and str_rot13() enable shell execution or code obfuscation and should not appear in production modules.",
+  "detection": {
+    "type": "pattern",
+    "patterns": [
+      "\\bpassthru\\s*\\(",
+      "\\bproc_open\\s*\\(",
+      "\\bdl\\s*\\(",
+      "\\bstr_rot13\\s*\\(",
+      "\\bpopen\\s*\\(",
+      "\\bpcntl_exec\\s*\\("
+    ]
+  },
+  "applies_to": ["php"],
+  "explanation": "passthru/proc_open/popen/pcntl_exec execute OS commands. dl() loads PHP extensions at runtime. str_rot13() is commonly used to obfuscate malicious code. None belong in production modules.",
+  "fix": "Remove the dangerous function call. If external process interaction is genuinely needed, document the requirement and use escapeshellarg() on all inputs.",
+  "examples": {
+    "bad": "passthru('convert ' . $file . ' output.png');",
+    "good": "// Use a PHP library instead of shell commands"
+  },
+  "exclude_if": [
+    { "type": "regex", "value": "^\\s*(\\/\\/|#|\\*)" },
+    { "type": "contains", "value": "function_exists" }
+  ],
+  "tags": ["shell", "dangerous-function", "obfuscation"],
+  "version": "1.0",
+  "enabled": true,
+  "score": 10
+}

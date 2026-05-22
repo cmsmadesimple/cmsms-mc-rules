@@ -1,0 +1,47 @@
+{
+  "rule_id": "CMSMS_CMS_018",
+  "title": "Error reporting or display_errors set in production code",
+  "category": "cmsms",
+  "severity": "medium",
+  "confidence": "high",
+  "score": 5,
+  "description": "The module calls error_reporting() or ini_set('display_errors') which overrides the site's error configuration and interferes with debugging.",
+  "detection": {
+    "type": "pattern",
+    "patterns": [
+      "\\berror_reporting\\s*\\(",
+      "ini_set\\s*\\(\\s*['\"]display_errors['\"]",
+      "ini_set\\s*\\(\\s*['\"]log_errors['\"]",
+      "ini_set\\s*\\(\\s*['\"]error_log['\"]"
+    ]
+  },
+  "context": [
+    "error_handling",
+    "production"
+  ],
+  "requires": [
+    "error_reporting_override"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "Setting error_reporting() or display_errors permanently in a module overrides the site administrator's configuration. If another developer tries to debug their site, your module's settings will interfere with their output. Error reporting configuration belongs in php.ini or the CMS config, not in module code.",
+  "fix": "Remove error_reporting() and ini_set('display_errors') calls. If you need error handling, use a custom error handler that respects the site's existing configuration.",
+  "examples": {
+    "bad": "error_reporting(E_ALL);\nini_set('display_errors', '1');",
+    "good": "// Let the site admin control error reporting via php.ini or config.php\n// If you need custom error handling:\nset_error_handler(function($errno, $errstr, $errfile, $errline) {\n    // log to module-specific log, don't change global settings\n});"
+  },
+  "exclude_if": [
+    {
+      "type": "contains",
+      "value": "error_reporting()"
+    }
+  ],
+  "tags": [
+    "error-handling",
+    "production",
+    "debugging"
+  ],
+  "version": "1.0",
+  "enabled": true
+}

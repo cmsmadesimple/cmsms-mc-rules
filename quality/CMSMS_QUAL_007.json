@@ -1,0 +1,37 @@
+{
+  "rule_id": "CMSMS_QUAL_007",
+  "title": "Deeply nested control structures (4+ levels)",
+  "category": "quality",
+  "severity": "medium",
+  "confidence": "medium",
+  "description": "Four or more levels of nested if/for/foreach/while blocks, indicating high cyclomatic complexity.",
+  "detection": {
+    "type": "pattern",
+    "patterns": [
+      "(?:if|foreach|for|while)\\s*\\([^)]*\\)\\s*\\{[^}]*(?:if|foreach|for|while)\\s*\\([^)]*\\)\\s*\\{[^}]*(?:if|foreach|for|while)\\s*\\([^)]*\\)\\s*\\{[^}]*(?:if|foreach|for|while)\\s*\\([^)]*\\)\\s*\\{"
+    ]
+  },
+  "context": [
+    "complexity"
+  ],
+  "requires": [
+    "deep_nesting"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "Deep nesting makes code hard to follow, test, and modify. Each level multiplies the number of execution paths.",
+  "fix": "Use early returns/continue (guard clauses), extract inner blocks into named methods, or use array_filter/array_map.",
+  "examples": {
+    "bad": "foreach ($mods as $m) {\n    if ($m->isActive()) {\n        foreach ($m->getItems() as $i) {\n            if ($i->isValid()) {\n                if ($i->hasAccess($u)) {\n                    process($i);\n                }\n            }\n        }\n    }\n}",
+    "good": "foreach ($mods as $m) {\n    if (!$m->isActive()) continue;\n    $this->processItems($m, $u);\n}"
+  },
+  "tags": [
+    "complexity",
+    "readability",
+    "maintainability"
+  ],
+  "version": "1.0",
+  "enabled": true,
+  "score": 3
+}

@@ -1,0 +1,26 @@
+{
+  "rule_id": "CMSMS_QUAL_015",
+  "title": "Short PHP open tag used instead of <?php",
+  "category": "quality",
+  "severity": "medium",
+  "confidence": "high",
+  "description": "Short open tags (<?) depend on the short_open_tag PHP ini setting which is off by default. Code using short tags will fail silently on many servers.",
+  "detection": {
+    "type": "pattern",
+    "patterns": [
+      "<\\?\\s(?!php|=|xml)"
+    ]
+  },
+  "applies_to": ["php"],
+  "explanation": "The short open tag <? is disabled by default in PHP. Using it makes your module incompatible with standard PHP configurations. Always use <?php.",
+  "fix": "Replace <? with <?php. Short echo <?= is acceptable in PHP 5.4+.",
+  "examples": {
+    "bad": "<? echo $variable; ?>",
+    "good": "<?php echo $variable; ?>"
+  },
+  "exclude_if": [],
+  "tags": ["compatibility", "php-config"],
+  "version": "1.0",
+  "enabled": true,
+  "score": 5
+}

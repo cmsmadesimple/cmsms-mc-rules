@@ -1,0 +1,36 @@
+{
+  "rule_id": "CMSMS_CMS_013",
+  "title": "Generic class filename in lib/ without module prefix",
+  "category": "cmsms",
+  "severity": "medium",
+  "confidence": "high",
+  "description": "A class file in lib/ uses a generic name like class.helper.php, class.utils.php, class.api.php without the module name prefix, risking autoloader collisions with other modules.",
+  "detection": {
+    "type": "heuristic",
+    "patterns": []
+  },
+  "context": [
+    "naming",
+    "structure"
+  ],
+  "requires": [
+    "generic_class_filename"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "CMSMS modules share a global autoloader namespace. A class named 'Helper' or 'Utils' in one module will collide with the same name in another. Prefix with the module name: class.MyModule_Utils.php or use a PHP namespace.",
+  "fix": "Rename the class file to include the module name: class.MyModule_Helper.php, or use a PHP namespace matching the module.",
+  "examples": {
+    "bad": "lib/class.helper.php\nlib/class.utils.php\nlib/class.api.php",
+    "good": "lib/class.News_helper.php\nlib/class.news_ops.php\nlib/class.Gallery_utils.php"
+  },
+  "tags": [
+    "naming",
+    "autoloader",
+    "collision"
+  ],
+  "version": "1.0",
+  "enabled": true,
+  "score": 5
+}

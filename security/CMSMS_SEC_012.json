@@ -1,0 +1,38 @@
+{
+  "rule_id": "CMSMS_SEC_012",
+  "title": "File upload with user-controlled destination filename",
+  "category": "security",
+  "severity": "high",
+  "confidence": "high",
+  "score": 10,
+  "description": "move_uploaded_file() uses the original user-supplied filename ($_FILES[...]['name']) as the destination.",
+  "detection": {
+    "type": "pattern",
+    "patterns": [
+      "move_uploaded_file\\s*\\([^,]+,\\s*[^)]*\\$_FILES\\s*\\[[^]]+\\]\\s*\\[\\s*['\"]name['\"]\\s*\\]"
+    ]
+  },
+  "context": [
+    "file_path"
+  ],
+  "requires": [
+    "user_controlled_filename"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "The original filename from $_FILES is fully user-controlled. It can contain ../ for traversal or .php extensions to upload executable code.",
+  "fix": "Generate a safe filename server-side. Validate extension against an allowlist.",
+  "examples": {
+    "bad": "move_uploaded_file($_FILES['doc']['tmp_name'], $dir . '/' . $_FILES['doc']['name']);",
+    "good": "$ext = strtolower(pathinfo($_FILES['doc']['name'], PATHINFO_EXTENSION));\nif (!in_array($ext, ['pdf', 'doc', 'txt'], true)) { return; }\n$safe = bin2hex(random_bytes(16)) . '.' . $ext;\nmove_uploaded_file($_FILES['doc']['tmp_name'], $dir . '/' . $safe);"
+  },
+  "tags": [
+    "upload",
+    "file",
+    "rce",
+    "path-traversal"
+  ],
+  "version": "1.0",
+  "enabled": true
+}

@@ -1,0 +1,49 @@
+{
+  "rule_id": "CMSMS_SEC_001",
+  "title": "User input flows into SQL query",
+  "category": "security",
+  "severity": "high",
+  "confidence": "high",
+  "description": "A superglobal or $params value is concatenated directly into a SQL query string passed to a database method.",
+  "detection": {
+    "type": "pattern",
+    "patterns": [
+      "(?:Execute|GetRow|GetOne|GetAll|GetCol|SelectLimit)\\s*\\([^)]*\\.\\s*\\$_(GET|POST|REQUEST)\\s*\\[",
+      "(?:Execute|GetRow|GetOne|GetAll|GetCol|SelectLimit)\\s*\\([^)]*\\.\\s*\\$params\\s*\\[(?![^)]*\\?)"
+    ]
+  },
+  "context": [
+    "sql"
+  ],
+  "requires": [
+    "user_input_flow"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "User-controlled values concatenated into SQL strings allow injection. The ADODB layer in CMSMS supports parameterized queries natively.",
+  "fix": "Use ? placeholders and pass values as the second array argument to the ADODB method.",
+  "examples": {
+    "bad": "$db->GetRow('SELECT * FROM ' . CMS_DB_PREFIX . 'items WHERE id = ' . $params['id']);",
+    "good": "$db->GetRow('SELECT * FROM ' . CMS_DB_PREFIX . 'items WHERE id = ?', [(int)$params['id']]);"
+  },
+  "exclude_if": [
+    {
+      "type": "contains",
+      "value": "prepare("
+    },
+    {
+      "type": "regex",
+      "value": "\\?\\s*['\"]\\s*,\\s*\\["
+    }
+  ],
+  "tags": [
+    "sql",
+    "injection",
+    "input",
+    "db"
+  ],
+  "version": "1.0",
+  "enabled": true,
+  "score": 10
+}

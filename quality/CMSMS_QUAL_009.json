@@ -1,0 +1,38 @@
+{
+  "rule_id": "CMSMS_QUAL_009",
+  "title": "SELECT * in production query",
+  "category": "quality",
+  "severity": "low",
+  "confidence": "medium",
+  "description": "A database query uses SELECT * instead of explicitly naming columns, fetching unnecessary data and breaking if schema changes.",
+  "detection": {
+    "type": "pattern",
+    "patterns": [
+      "(?:GetAll|GetRow|GetOne|Execute|SelectLimit)\\s*\\(\\s*['\"]\\s*SELECT\\s+\\*\\s+FROM"
+    ]
+  },
+  "context": [
+    "sql",
+    "performance"
+  ],
+  "requires": [
+    "wildcard_select"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "SELECT * fetches all columns including BLOBs and unused fields, wastes memory, and makes code fragile when columns are added/removed.",
+  "fix": "List only the columns you need: SELECT id, name, status FROM ...",
+  "examples": {
+    "bad": "$rows = $db->GetAll('SELECT * FROM ' . CMS_DB_PREFIX . 'module_mymod_items');",
+    "good": "$rows = $db->GetAll('SELECT id, name, status FROM ' . CMS_DB_PREFIX . 'module_mymod_items');"
+  },
+  "tags": [
+    "performance",
+    "database",
+    "maintainability"
+  ],
+  "version": "1.0",
+  "enabled": true,
+  "score": 1
+}

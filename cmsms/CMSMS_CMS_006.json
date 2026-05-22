@@ -1,0 +1,38 @@
+{
+  "rule_id": "CMSMS_CMS_006",
+  "title": "Admin action file missing CheckPermission() call",
+  "category": "cmsms",
+  "severity": "high",
+  "confidence": "high",
+  "description": "An admin action file (action.admin* or action.defaultadmin) performs operations without calling CheckPermission(), allowing unauthorized access.",
+  "detection": {
+    "type": "heuristic",
+    "patterns": [
+      "^(?!.*CheckPermission\\s*\\()(?=.*(?:\\$db|Execute|GetRow|GetAll|SetPreference|assign|ProcessTemplate)).*$"
+    ]
+  },
+  "context": [
+    "auth"
+  ],
+  "requires": [
+    "admin_action_file",
+    "missing_permission_gate"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "Every admin action must gate on CheckPermission() before performing any operation. Without it, any authenticated admin user — regardless of role — can access the functionality.",
+  "fix": "Add CheckPermission() at the top of the action file, before any logic.",
+  "examples": {
+    "bad": "// action.admin_settings.php\n$db = cmsms()->GetDb();\n$rows = $db->GetAll('SELECT * FROM ' . CMS_DB_PREFIX . 'module_mymod_config');",
+    "good": "// action.admin_settings.php\nif (!$this->CheckPermission('Manage MyModule')) {\n    echo $this->ShowErrors($this->Lang('error_permission'));\n    return;\n}\n$db = cmsms()->GetDb();"
+  },
+  "tags": [
+    "auth",
+    "permissions",
+    "access-control"
+  ],
+  "version": "1.0",
+  "enabled": true,
+  "score": 7
+}

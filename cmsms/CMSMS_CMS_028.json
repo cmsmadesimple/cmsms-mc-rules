@@ -1,0 +1,44 @@
+{
+  "rule_id": "CMSMS_CMS_028",
+  "title": "Direct $_GET access instead of $params in action file",
+  "category": "cmsms",
+  "severity": "low",
+  "confidence": "medium",
+  "description": "An action file accesses $_GET directly. In CMSMS action files, frontend parameters arrive via $params. $_POST and $_REQUEST access is acceptable for direct input cleaning per CMSMS 2.2.8+ guidance.",
+  "detection": {
+    "type": "pattern",
+    "patterns": [
+      "\\$_GET\\s*\\["
+    ]
+  },
+  "context": [
+    "input",
+    "api"
+  ],
+  "requires": [
+    "direct_superglobal_access"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "CMSMS auto-cleans $_GET and delivers action parameters via $params. Direct $_GET access in action files bypasses module parameter scoping and may read parameters intended for other modules. $_POST/$_REQUEST access is acceptable since CMSMS 2.2.8 deprecated SetParameterType() in favor of direct input cleaning.",
+  "fix": "Use $params['key'] for action parameters. For direct input cleaning, use filter_input(INPUT_GET, 'key', FILTER_SANITIZE_...) instead of $_GET['key'].",
+  "examples": {
+    "bad": "$page = $_GET['page'];",
+    "good": "$page = (int)($params['page'] ?? 1);\n// Or for non-action context:\n$page = filter_input(INPUT_GET, 'page', FILTER_VALIDATE_INT) ?: 1;"
+  },
+  "exclude_if": [
+    {
+      "type": "contains",
+      "value": "filter_input("
+    }
+  ],
+  "tags": [
+    "input",
+    "api",
+    "modernization"
+  ],
+  "version": "1.0",
+  "enabled": true,
+  "score": 2
+}

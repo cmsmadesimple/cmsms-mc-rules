@@ -1,0 +1,37 @@
+{
+  "rule_id": "CMSMS_CMS_014",
+  "title": "Preference key without module name prefix",
+  "category": "cmsms",
+  "severity": "low",
+  "confidence": "low",
+  "description": "SetPreference() or GetPreference() uses a very short generic key. Note: CMSMS scopes module preferences per-module internally, so collision risk is low. This is informational only.",
+  "detection": {
+    "type": "pattern",
+    "patterns": [
+      "(?:Set|Get)Preference\\s*\\(\\s*['\"](?!\\w{4,}_)[a-z]{1,6}['\"]"
+    ]
+  },
+  "context": [
+    "naming"
+  ],
+  "requires": [
+    "generic_preference_key"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "CMSMS stores all module preferences in a shared table. Short generic keys like 'enabled', 'mode', 'limit' can collide across modules. Prefix with the module name or a unique abbreviation.",
+  "fix": "Prefix preference keys: $this->SetPreference('mymodule_enabled', '1') instead of $this->SetPreference('enabled', '1').",
+  "examples": {
+    "bad": "$this->SetPreference('enabled', '1');\n$this->GetPreference('mode', 'default');",
+    "good": "$this->SetPreference('logwatch_enabled', '1');\n$this->GetPreference('logwatch_mode', 'default');"
+  },
+  "tags": [
+    "naming",
+    "preferences",
+    "collision"
+  ],
+  "version": "1.0",
+  "enabled": true,
+  "score": 2
+}

@@ -1,0 +1,57 @@
+{
+  "rule_id": "CMSMS_SEC_004",
+  "title": "User input flows into include/require",
+  "category": "security",
+  "severity": "high",
+  "confidence": "high",
+  "description": "A superglobal or $params value is used in an include/require path, enabling Local/Remote File Inclusion.",
+  "detection": {
+    "type": "pattern",
+    "patterns": [
+      "(?:include|require|include_once|require_once)\\s*\\(?[^;]*\\$_(GET|POST|REQUEST)\\s*\\[",
+      "(?:include|require|include_once|require_once)\\s*\\(?[^;]*\\$params\\s*\\["
+    ]
+  },
+  "context": [
+    "file_path"
+  ],
+  "requires": [
+    "user_input_flow"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "Including files based on user input allows attackers to execute arbitrary PHP via LFI (local file inclusion) or RFI (remote file inclusion).",
+  "fix": "Use an allowlist of valid include targets. Never pass user input to include/require.",
+  "examples": {
+    "bad": "include($module_path . '/views/' . $params['view'] . '.php');",
+    "good": "$allowed = ['list', 'detail', 'edit'];\n$view = in_array($params['view'] ?? '', $allowed, true) ? $params['view'] : 'list';\ninclude($module_path . '/views/' . $view . '.php');"
+  },
+  "exclude_if": [
+    {
+      "type": "contains",
+      "value": "in_array("
+    },
+    {
+      "type": "contains",
+      "value": "basename("
+    },
+    {
+      "type": "contains",
+      "value": "cms_join_path("
+    },
+    {
+      "type": "regex",
+      "value": "getModulePath|GetModulePath"
+    }
+  ],
+  "tags": [
+    "lfi",
+    "rfi",
+    "file-inclusion",
+    "input"
+  ],
+  "version": "1.0",
+  "enabled": true,
+  "score": 10
+}

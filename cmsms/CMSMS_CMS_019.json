@@ -1,0 +1,37 @@
+{
+  "rule_id": "CMSMS_CMS_019",
+  "title": "Undocumented use of external service",
+  "category": "cmsms",
+  "severity": "medium",
+  "confidence": "medium",
+  "score": 5,
+  "description": "The module makes HTTP requests to external services (curl, file_get_contents with URL, or similar) which must be documented in the module's readme.md for transparency and legal compliance.",
+  "detection": {
+    "type": "heuristic",
+    "patterns": []
+  },
+  "context": [
+    "external_service",
+    "privacy"
+  ],
+  "requires": [
+    "external_http_request"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "Modules that connect to external services must clearly disclose this in the module's readme.md file. This is required for legal compliance (GDPR, privacy laws) and user trust. For each external service the module uses, the readme.md must include:\n\n1. What the service is and what it is used for.\n2. What data is sent to the service and under what conditions (e.g. on install, on every page load, on admin action).\n3. A link to the service's Terms of Use / Terms of Service.\n4. A link to the service's Privacy Policy.\n\nThis applies to all external connections including API calls, license verification, update checks, analytics, CDN resources, and any data transmission to third-party servers.",
+  "fix": "Add a 'Third-Party Services' section to your readme.md documenting each external service. Example:\n\n== Third-Party Services ==\n\nThis module connects to the following external services:\n\n= Example API (https://api.example.com) =\n\n* **Purpose:** Used to verify license keys and check for module updates.\n* **Data sent:** Your license key and site URL are transmitted when you activate the module and during daily update checks.\n* **Terms of Service:** https://example.com/terms\n* **Privacy Policy:** https://example.com/privacy",
+  "examples": {
+    "bad": "$response = file_get_contents('https://api.example.com/check?key=' . $license_key);",
+    "good": "// In readme.md:\n// == Third-Party Services ==\n// = Example API (https://api.example.com) =\n// * Purpose: License verification and update checks.\n// * Data sent: License key and site URL on activation and daily checks.\n// * Terms of Service: https://example.com/terms\n// * Privacy Policy: https://example.com/privacy\n$response = file_get_contents('https://api.example.com/check?key=' . $license_key);"
+  },
+  "tags": [
+    "external-service",
+    "privacy",
+    "disclosure",
+    "gdpr"
+  ],
+  "version": "1.0",
+  "enabled": true
+}

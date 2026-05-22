@@ -1,0 +1,36 @@
+{
+  "rule_id": "CMSMS_CMS_030",
+  "title": "Module missing permission constants",
+  "category": "cmsms",
+  "severity": "medium",
+  "confidence": "high",
+  "description": "The main module class uses CheckPermission() with string literals instead of defining MANAGE_PERM / USE_PERM constants.",
+  "detection": {
+    "type": "heuristic",
+    "patterns": []
+  },
+  "context": [
+    "auth",
+    "structure"
+  ],
+  "requires": [
+    "missing_permission_constants"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "Modern CMSMS modules define permission names as class constants (e.g. const MANAGE_PERM = 'Manage MyModule') and reference them throughout the module. This prevents typos, enables IDE autocompletion, and makes permission names easy to change.",
+  "fix": "Add constants to the module class and reference them in CheckPermission(), CreatePermission(), and VisibleToAdminUser().\nconst MANAGE_PERM = 'Manage MyModule';\nconst USE_PERM = 'Use MyModule';",
+  "examples": {
+    "bad": "$this->CheckPermission('Manage MyModule');\n$this->CreatePermission('Manage MyModule');",
+    "good": "const MANAGE_PERM = 'Manage MyModule';\n$this->CheckPermission(self::MANAGE_PERM);\n$this->CreatePermission(self::MANAGE_PERM);"
+  },
+  "tags": [
+    "auth",
+    "constants",
+    "modernization"
+  ],
+  "version": "1.0",
+  "enabled": true,
+  "score": 3
+}

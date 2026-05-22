@@ -1,0 +1,39 @@
+{
+  "rule_id": "CMSMS_CMS_031",
+  "title": "Deprecated $this->smarty module property",
+  "category": "cmsms",
+  "severity": "medium",
+  "confidence": "high",
+  "description": "Code accesses $this->smarty directly. This magic property was deprecated in CMSMS 2.1.",
+  "detection": {
+    "type": "pattern",
+    "patterns": [
+      "\\$this\\s*->\\s*smarty\\s*->",
+      "\\$this\\s*->\\s*smarty\\s*;"
+    ]
+  },
+  "context": [
+    "api",
+    "deprecated"
+  ],
+  "requires": [
+    "deprecated_smarty_property"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "The $this->smarty magic property on module objects was deprecated in CMSMS 2.1. Use cmsms()->GetSmarty() or the $smarty variable provided in action scope.",
+  "fix": "Replace $this->smarty with cmsms()->GetSmarty() or use the $smarty variable already available in action files.",
+  "examples": {
+    "bad": "$this->smarty->assign('data', $data);",
+    "good": "$smarty = cmsms()->GetSmarty();\n$smarty->assign('data', $data);"
+  },
+  "tags": [
+    "deprecated",
+    "api",
+    "smarty"
+  ],
+  "version": "1.0",
+  "enabled": true,
+  "score": 4
+}

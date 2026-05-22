@@ -1,0 +1,38 @@
+{
+  "rule_id": "CMSMS_CMS_002",
+  "title": "Hardcoded absolute path instead of CMS path constants",
+  "category": "cmsms",
+  "severity": "medium",
+  "confidence": "high",
+  "description": "A hardcoded absolute filesystem path is used where CMSMS provides portable constants (CMS_ROOT_PATH, cms_join_path()).",
+  "detection": {
+    "type": "pattern",
+    "patterns": [
+      "['\"](?:/var/www|/home/\\w+|/srv/|/opt/|[A-Z]:\\\\\\\\)[^'\"]*(?:modules|uploads|tmp|assets)[^'\"]*['\"]",
+      "\\$_SERVER\\s*\\[\\s*['\"]DOCUMENT_ROOT['\"]\\s*\\]\\s*\\.\\s*['\"].*(?:modules|uploads)"
+    ]
+  },
+  "context": [
+    "file_path",
+    "portability"
+  ],
+  "requires": [
+    "hardcoded_absolute_path"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "Hardcoded paths break when the site moves to a different server, directory, or hosting environment. CMSMS provides CMS_ROOT_PATH and cms_join_path() for this.",
+  "fix": "Use cms_join_path(CMS_ROOT_PATH, 'modules', ...) or $config['uploads_path'].",
+  "examples": {
+    "bad": "$path = '/var/www/html/modules/MyModule/data/cache.json';",
+    "good": "$path = cms_join_path($this->GetModulePath(), 'data', 'cache.json');"
+  },
+  "tags": [
+    "paths",
+    "portability"
+  ],
+  "version": "1.0",
+  "enabled": true,
+  "score": 4
+}

@@ -1,0 +1,52 @@
+{
+  "rule_id": "CMSMS_CMS_003",
+  "title": "Hardcoded user-facing string in SetError/SetMessage",
+  "category": "cmsms",
+  "severity": "low",
+  "confidence": "high",
+  "description": "SetError() or SetMessage() is called with a literal English string instead of $this->Lang().",
+  "detection": {
+    "type": "pattern",
+    "patterns": [
+      "->SetError\\s*\\(\\s*['\"][A-Za-z][A-Za-z ]{5,}",
+      "->SetMessage\\s*\\(\\s*['\"][A-Za-z][A-Za-z ]{5,}",
+      "ShowErrors\\s*\\(\\s*['\"][A-Za-z][A-Za-z ]{5,}"
+    ]
+  },
+  "context": [
+    "i18n"
+  ],
+  "requires": [
+    "literal_string_in_ui_method"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "Hardcoded English strings in UI methods prevent localization and make string management inconsistent. CMSMS provides $this->Lang() backed by lang/ files.",
+  "fix": "Add the string to lang/en_US.php and reference via $this->Lang('key').",
+  "examples": {
+    "bad": "$this->SetError('The item could not be saved to the database.');",
+    "good": "$this->SetError($this->Lang('error_item_save_failed'));"
+  },
+  "exclude_if": [
+    {
+      "type": "contains",
+      "value": "$this->Lang("
+    },
+    {
+      "type": "regex",
+      "value": "\\$e->getMessage"
+    },
+    {
+      "type": "regex",
+      "value": "\\.\\s*\\$\\w+"
+    }
+  ],
+  "tags": [
+    "i18n",
+    "localization"
+  ],
+  "version": "1.0",
+  "enabled": true,
+  "score": 2
+}

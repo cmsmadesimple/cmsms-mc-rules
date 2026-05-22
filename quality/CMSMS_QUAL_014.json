@@ -1,0 +1,36 @@
+{
+  "rule_id": "CMSMS_QUAL_014",
+  "title": "Disallowed file type in module directory",
+  "category": "quality",
+  "severity": "high",
+  "confidence": "high",
+  "score": 7,
+  "description": "The module directory contains compressed archives, binary executables, VCS directories, or AI instruction directories that should not be included in production modules.",
+  "detection": {
+    "type": "heuristic",
+    "patterns": []
+  },
+  "context": [
+    "file_types",
+    "distribution"
+  ],
+  "requires": [
+    "disallowed_file_scan"
+  ],
+  "applies_to": [
+    "module"
+  ],
+  "explanation": "Production modules should not contain: compressed archives (.zip, .gz, .tar, .rar), binary executables (.exe, .bin, .phar, .dll, .so), version control directories (.git, .svn), or AI tool directories (.cursor, .claude, .aider). These bloat the module, pose security risks, or leak development metadata.",
+  "fix": "Remove disallowed files before distribution. Use .distignore or a build script to exclude development files from release packages.",
+  "examples": {
+    "bad": "modules/MyModule/\n├── .git/\n├── backup.zip\n├── tool.exe\n└── .cursor/",
+    "good": "modules/MyModule/\n├── MyModule.module.php\n├── lib/\n├── templates/\n└── assets/"
+  },
+  "tags": [
+    "file_types",
+    "distribution",
+    "cleanup"
+  ],
+  "version": "1.0",
+  "enabled": true
+}

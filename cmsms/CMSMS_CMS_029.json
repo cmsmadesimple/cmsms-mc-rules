@@ -1,0 +1,39 @@
+{
+  "rule_id": "CMSMS_CMS_029",
+  "title": "Legacy cmsms()->GetDb() instead of cms_utils::get_db()",
+  "category": "cmsms",
+  "severity": "low",
+  "confidence": "high",
+  "description": "Code uses cmsms()->GetDb() or CmsApp::get_instance()->GetDb() instead of the modern cms_utils::get_db() static accessor. Note: cmsms()->GetDb() is standard and safe in CMSMS 2.2.x; this rule only applies when targeting CMSMS 3.x+.",
+  "detection": {
+    "type": "pattern",
+    "patterns": [
+      "cmsms\\s*\\(\\s*\\)\\s*->\\s*GetDb\\s*\\(",
+      "CmsApp::get_instance\\s*\\(\\s*\\)\\s*->\\s*GetDb\\s*\\("
+    ]
+  },
+  "context": [
+    "api",
+    "deprecated"
+  ],
+  "requires": [
+    "deprecated_db_accessor"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "cms_utils::get_db() is the modern static accessor for the database connection. The cmsms()->GetDb() chain is verbose but remains standard and safe in CMSMS 2.2.x. Only flag when targeting CMSMS 3.x+.",
+  "fix": "Replace with $db = cms_utils::get_db();",
+  "examples": {
+    "bad": "$db = cmsms()->GetDb();\n$db = CmsApp::get_instance()->GetDb();",
+    "good": "$db = cms_utils::get_db();"
+  },
+  "tags": [
+    "deprecated",
+    "api",
+    "modernization"
+  ],
+  "version": "1.0",
+  "enabled": false,
+  "score": 1
+}

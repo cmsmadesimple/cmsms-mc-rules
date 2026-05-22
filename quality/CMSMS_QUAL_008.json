@@ -1,0 +1,38 @@
+{
+  "rule_id": "CMSMS_QUAL_008",
+  "title": "Overly large file (500+ lines)",
+  "category": "quality",
+  "severity": "low",
+  "confidence": "high",
+  "description": "A PHP file exceeds 500 lines, suggesting it handles too many responsibilities and should be decomposed. This is informational and common in legacy modules.",
+  "detection": {
+    "type": "heuristic",
+    "patterns": [
+      "(?s)(?:.*\\n){500,}"
+    ]
+  },
+  "context": [
+    "complexity",
+    "maintainability"
+  ],
+  "requires": [
+    "line_count_threshold"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "Large files are hard to navigate, review, and test. In CMSMS modules, action files and the main module class tend to accumulate logic that belongs in lib/ classes.",
+  "fix": "Extract cohesive functionality into focused classes under lib/. Use the module autoloader.",
+  "examples": {
+    "bad": "// action.defaultadmin.php — 800 lines handling list, edit, delete, settings, export",
+    "good": "// action.defaultadmin.php — 30 lines delegating to:\n$controller = new MyModule\\AdminController($this, $smarty);\n$controller->dispatch($params);"
+  },
+  "tags": [
+    "maintainability",
+    "complexity",
+    "srp"
+  ],
+  "version": "1.0",
+  "enabled": true,
+  "score": 3
+}

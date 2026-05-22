@@ -1,0 +1,56 @@
+{
+  "rule_id": "CMSMS_CMS_035",
+  "title": "Deprecated strftime() function",
+  "category": "cmsms",
+  "severity": "medium",
+  "confidence": "high",
+  "description": "Code calls PHP's strftime() which was deprecated in PHP 8.1. CMSMS provides locale_ftime() as a replacement since 2.2.16.",
+  "detection": {
+    "type": "pattern",
+    "patterns": [
+      "\\bstrftime\\s*\\("
+    ]
+  },
+  "context": [
+    "deprecated",
+    "compatibility"
+  ],
+  "requires": [
+    "deprecated_strftime"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "PHP's strftime() was deprecated in PHP 8.1 and removed in PHP 9.0. CMSMS 2.2.16+ provides locale_ftime() as a drop-in replacement, and CMSMS 2.2.17+ provides CMSMS\\strftime as a fallback. For Smarty templates, use the |localedate_format modifier instead of |date_format.",
+  "fix": "Replace strftime() with locale_ftime() in PHP code. In templates, replace |date_format with |localedate_format.",
+  "examples": {
+    "bad": "$date = strftime('%B %d, %Y', $timestamp);",
+    "good": "$date = locale_ftime('%B %d, %Y', $timestamp);"
+  },
+  "exclude_if": [
+    {
+      "type": "contains",
+      "value": "locale_ftime"
+    },
+    {
+      "type": "contains",
+      "value": "CMSMS\\strftime"
+    },
+    {
+      "type": "filename_regex",
+      "value": "^[a-z]{2}_[A-Z]{2}\\.php$"
+    },
+    {
+      "type": "line_regex",
+      "value": "\\$lang\\s*\\["
+    }
+  ],
+  "tags": [
+    "deprecated",
+    "php81",
+    "compatibility"
+  ],
+  "version": "1.0",
+  "enabled": true,
+  "score": 4
+}

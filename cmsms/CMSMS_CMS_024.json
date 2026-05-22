@@ -1,0 +1,36 @@
+{
+  "rule_id": "CMSMS_CMS_024",
+  "title": "Class or function defined without namespace or module prefix",
+  "category": "cmsms",
+  "severity": "medium",
+  "confidence": "medium",
+  "score": 5,
+  "description": "A class or function is defined in the global namespace with a name that does not start with the module name, risking collision with core CMSMS, other modules, or PHP built-ins.",
+  "detection": {
+    "type": "heuristic",
+    "patterns": []
+  },
+  "context": [
+    "naming",
+    "collision"
+  ],
+  "requires": [
+    "global_name_collision_risk"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "CMSMS modules share a global PHP namespace. Defining a class or function without a namespace or module name prefix will cause fatal errors if another module uses the same name. Use PHP namespaces or prefix all names with the module name.",
+  "fix": "Add a namespace declaration (e.g. namespace MyModule;) or prefix the class/function name with the module name.",
+  "examples": {
+    "bad": "class Helper { ... }\nfunction format_date($ts) { ... }",
+    "good": "namespace MyModule;\nclass Helper { ... }\n// or\nclass MyModule_Helper { ... }\nfunction mymodule_format_date($ts) { ... }"
+  },
+  "tags": [
+    "naming",
+    "collision",
+    "namespace"
+  ],
+  "version": "1.0",
+  "enabled": true
+}

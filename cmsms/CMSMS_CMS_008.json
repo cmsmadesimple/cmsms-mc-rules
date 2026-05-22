@@ -1,0 +1,49 @@
+{
+  "rule_id": "CMSMS_CMS_008",
+  "title": "SQL query with hardcoded table name missing CMS_DB_PREFIX",
+  "category": "cmsms",
+  "severity": "medium",
+  "confidence": "high",
+  "description": "A SQL query references a CMSMS table name directly without prepending CMS_DB_PREFIX, which breaks on installations with custom prefixes.",
+  "detection": {
+    "type": "pattern",
+    "patterns": [
+      "(?:FROM|JOIN|INTO|UPDATE)\\s+['\"]?module_\\w+",
+      "(?:FROM|JOIN|INTO|UPDATE)\\s+['\"]?cms_\\w+"
+    ]
+  },
+  "context": [
+    "sql",
+    "portability"
+  ],
+  "requires": [
+    "missing_table_prefix_constant"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "CMSMS allows custom table prefixes. Hardcoding 'module_' or 'cms_' directly in SQL breaks on any installation that changed the default prefix.",
+  "fix": "Always use CMS_DB_PREFIX . 'table_name' or cms_db_prefix() . 'table_name'.",
+  "examples": {
+    "bad": "$db->GetAll(\"SELECT * FROM module_news_items WHERE active = 1\");",
+    "good": "$db->GetAll('SELECT * FROM ' . CMS_DB_PREFIX . 'module_news_items WHERE active = 1');"
+  },
+  "exclude_if": [
+    {
+      "type": "contains",
+      "value": "CMS_DB_PREFIX"
+    },
+    {
+      "type": "contains",
+      "value": "cms_db_prefix("
+    }
+  ],
+  "tags": [
+    "database",
+    "portability",
+    "prefix"
+  ],
+  "version": "1.0",
+  "enabled": true,
+  "score": 5
+}

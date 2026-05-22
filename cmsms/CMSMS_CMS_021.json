@@ -1,0 +1,61 @@
+{
+  "rule_id": "CMSMS_CMS_021",
+  "title": "Debug output statement left in production code",
+  "category": "cmsms",
+  "severity": "medium",
+  "confidence": "high",
+  "score": 5,
+  "description": "Debug functions like var_dump(), print_r(), debug_print_backtrace(), or trigger_error() are present in module code. These leak internal data to users and should be removed before release.",
+  "detection": {
+    "type": "pattern",
+    "patterns": [
+      "\\bvar_dump\\s*\\(",
+      "\\bprint_r\\s*\\(",
+      "\\bdebug_print_backtrace\\s*\\(",
+      "\\bdebug_zval_dump\\s*\\(",
+      "\\bvar_export\\s*\\(\\s*[^,]+\\s*\\)",
+      "\\btrigger_error\\s*\\("
+    ]
+  },
+  "context": [
+    "debug",
+    "production"
+  ],
+  "requires": [
+    "debug_output_in_production"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "Debug output functions dump internal state (variables, stack traces, object structures) directly to the browser. In production, this exposes sensitive information like database credentials, file paths, and internal logic to end users. These calls should be removed or wrapped in a debug-mode check before release.",
+  "fix": "Remove all var_dump(), print_r(), and debug_print_backtrace() calls. If you need runtime debugging, use error_log() to write to the server log instead, or wrap in a debug-mode check: if (defined('CMS_DEBUG') && CMS_DEBUG) { var_dump($data); }",
+  "examples": {
+    "bad": "var_dump($params);\nprint_r($db->ErrorMsg());\ndebug_print_backtrace();",
+    "good": "error_log('MyModule debug: ' . print_r($params, true));\n// Or wrap in debug check:\nif (defined('CMS_DEBUG') && CMS_DEBUG) {\n    error_log(print_r($params, true));\n}"
+  },
+  "exclude_if": [
+    {
+      "type": "contains",
+      "value": "print_r($"
+    },
+    {
+      "type": "contains",
+      "value": ", true)"
+    },
+    {
+      "type": "regex",
+      "value": "trigger_error\\s*\\([^)]*E_USER_"
+    },
+    {
+      "type": "regex",
+      "value": "^\\s*(?://|#|\\*|/\\*)"
+    }
+  ],
+  "tags": [
+    "debug",
+    "production",
+    "information-disclosure"
+  ],
+  "version": "1.0",
+  "enabled": true
+}

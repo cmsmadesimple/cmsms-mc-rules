@@ -1,0 +1,39 @@
+{
+  "rule_id": "CMSMS_QUAL_001",
+  "title": "Inline <script> block in PHP echo output",
+  "category": "quality",
+  "severity": "low",
+  "confidence": "high",
+  "description": "PHP code echoes a <script> block directly, embedding JavaScript in PHP output instead of a separate .js asset.",
+  "detection": {
+    "type": "pattern",
+    "patterns": [
+      "(?:echo|print)\\s+['\"][^'\"]*<script[^>]*>[^'\"]{10,}",
+      "(?:echo|print)\\s*\\(\\s*['\"][^'\"]*<script[^>]*>"
+    ]
+  },
+  "context": [
+    "output",
+    "separation_of_concerns"
+  ],
+  "requires": [
+    "inline_script_in_php_output"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "Inline JS in PHP output prevents browser caching, blocks CSP enforcement, and tangles presentation with server logic.",
+  "fix": "Move JS to a .js file in assets/ and load via $this->AddHeaderJavascript() or a template <script src>.",
+  "examples": {
+    "bad": "echo '<script>document.getElementById(\"btn\").addEventListener(\"click\", function() { submit(); });</script>';",
+    "good": "$this->AddHeaderJavascript($this->GetModuleURLPath() . '/assets/admin.js');"
+  },
+  "tags": [
+    "javascript",
+    "separation-of-concerns",
+    "csp"
+  ],
+  "version": "1.0",
+  "enabled": true,
+  "score": 2
+}

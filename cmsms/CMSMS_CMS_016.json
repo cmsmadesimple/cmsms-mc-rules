@@ -1,0 +1,38 @@
+{
+  "rule_id": "CMSMS_CMS_016",
+  "title": "Event name without module prefix",
+  "category": "cmsms",
+  "severity": "low",
+  "confidence": "medium",
+  "description": "CreateEvent() or SendEvent() uses an event name without the module name prefix, risking collision in the global event system.",
+  "detection": {
+    "type": "pattern",
+    "patterns": [
+      "(?:CreateEvent|SendEvent|AddEventHandler)\\s*\\(\\s*['\"](?!\\w+::)[a-zA-Z_]+['\"]\\s*,\\s*['\"][a-zA-Z_]+['\"]"
+    ]
+  },
+  "context": [
+    "naming",
+    "events"
+  ],
+  "requires": [
+    "generic_event_name"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "CMSMS events are global. The convention is ModuleName::EventName (e.g. 'News::NewsArticleAdded'). Unprefixed events like 'ItemSaved' will collide.",
+  "fix": "Use the ModuleName::EventName pattern for all custom events.",
+  "examples": {
+    "bad": "$this->CreateEvent('ItemSaved');\n$this->SendEvent('ItemDeleted', $params);",
+    "good": "$this->CreateEvent('MyModule::ItemSaved');\n$this->SendEvent('MyModule::ItemDeleted', $params);"
+  },
+  "tags": [
+    "naming",
+    "events",
+    "collision"
+  ],
+  "version": "1.0",
+  "enabled": true,
+  "score": 2
+}

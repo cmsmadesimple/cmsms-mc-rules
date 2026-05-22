@@ -1,0 +1,48 @@
+{
+  "rule_id": "CMSMS_SEC_005",
+  "title": "User input flows into shell command",
+  "category": "security",
+  "severity": "high",
+  "confidence": "high",
+  "description": "A superglobal or $params value is passed to a shell execution function without escapeshellarg().",
+  "detection": {
+    "type": "pattern",
+    "patterns": [
+      "(?:exec|system|passthru|shell_exec|popen|proc_open)\\s*\\([^)]*\\$_(GET|POST|REQUEST)\\s*\\[",
+      "(?:exec|system|passthru|shell_exec|popen|proc_open)\\s*\\([^)]*\\$params\\s*\\["
+    ]
+  },
+  "context": [
+    "shell"
+  ],
+  "requires": [
+    "user_input_flow"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "User input in shell commands enables OS command injection. Attackers can chain commands with ;, |, &&, or backticks.",
+  "fix": "Avoid shell commands entirely. If unavoidable, use escapeshellarg() on every argument.",
+  "examples": {
+    "bad": "exec('convert ' . $params['file'] . ' output.png');",
+    "good": "exec('convert ' . escapeshellarg($validated_path) . ' ' . escapeshellarg($output));"
+  },
+  "exclude_if": [
+    {
+      "type": "contains",
+      "value": "escapeshellarg("
+    },
+    {
+      "type": "contains",
+      "value": "escapeshellcmd("
+    }
+  ],
+  "tags": [
+    "rce",
+    "command-injection",
+    "input"
+  ],
+  "version": "1.0",
+  "enabled": true,
+  "score": 10
+}

@@ -1,0 +1,41 @@
+{
+  "rule_id": "CMSMS_CMS_032",
+  "title": "Deprecated module parameter registration methods",
+  "category": "cmsms",
+  "severity": "medium",
+  "confidence": "high",
+  "description": "Code calls SetParameterType(), CreateParameter(), RestrictUnknownParameters(), or GetModuleParameters() which were deprecated in CMSMS 2.2.8.",
+  "detection": {
+    "type": "pattern",
+    "patterns": [
+      "->SetParameterType\\s*\\(",
+      "->CreateParameter\\s*\\(",
+      "->RestrictUnknownParameters\\s*\\(",
+      "GetModuleParameters\\s*\\("
+    ]
+  },
+  "context": [
+    "api",
+    "deprecated"
+  ],
+  "requires": [
+    "deprecated_parameter_methods"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "SetParameterType(), CreateParameter(), RestrictUnknownParameters(), and GetModuleParameters() were deprecated in CMSMS 2.2.8. Modules should now clean parameters directly using filter_var() or type casting. In the future, $params in module actions will only consist of parameters passed on the module tag.",
+  "fix": "Remove SetParameterType/CreateParameter/RestrictUnknownParameters calls. Validate $params values directly with filter_var(), (int) casting, or htmlspecialchars().",
+  "examples": {
+    "bad": "$this->SetParameterType('id', CLEAN_INT);\n$this->CreateParameter('sortby', 'name', 'Sort field');",
+    "good": "// In action file, validate directly:\n$id = (int)($params['id'] ?? 0);\n$sortby = in_array($params['sortby'] ?? '', ['name','date'], true) ? $params['sortby'] : 'name';"
+  },
+  "tags": [
+    "deprecated",
+    "api",
+    "parameters"
+  ],
+  "version": "1.0",
+  "enabled": true,
+  "score": 4
+}

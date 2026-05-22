@@ -1,0 +1,37 @@
+{
+  "rule_id": "CMSMS_CMS_027",
+  "title": "Database table creation does not follow CMSMS conventions",
+  "category": "cmsms",
+  "severity": "high",
+  "confidence": "high",
+  "score": 7,
+  "description": "The method.install.php or method.upgrade.php file creates or modifies database tables without following CMSMS conventions: must use NewDataDictionary/CreateTableSQL (not raw CREATE TABLE), must use cms_db_prefix(), table names must follow module_<name>_ convention, should use InnoDB engine (recommended, not required), must call ExecuteSQLArray, and upgrades should use DataDictionary methods (AddColumnSQL, AlterColumnSQL, ChangeTableSQL, DropColumnSQL, RenameColumnSQL, CreateIndexSQL, etc.).",
+  "detection": {
+    "type": "heuristic",
+    "patterns": []
+  },
+  "context": [
+    "database",
+    "compliance"
+  ],
+  "requires": [
+    "table_creation_validation"
+  ],
+  "applies_to": [
+    "module"
+  ],
+  "explanation": "CMSMS provides a database abstraction layer (ADODB Data Dictionary) for creating and modifying tables. Using raw CREATE TABLE or ALTER TABLE SQL bypasses this layer, breaking portability across database engines. Tables must use cms_db_prefix() for the table prefix and follow the module_<modulename>_ naming convention. InnoDB is required for foreign key support and crash recovery. Upgrades must use AddColumnSQL/AlterColumnSQL to safely modify existing tables.",
+  "fix": "Use $dict = NewDataDictionary($db); $sqlarray = $dict->CreateTableSQL(cms_db_prefix().'module_mymod_items', $flds, $taboptarray); $dict->ExecuteSQLArray($sqlarray); with $taboptarray = ['mysql' => 'ENGINE=InnoDB'];",
+  "examples": {
+    "bad": "$db->Execute('CREATE TABLE module_mymod_items (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255))');",
+    "good": "$db = $this->GetDb();\n$dict = NewDataDictionary($db);\n$taboptarray = ['mysql' => 'ENGINE=InnoDB'];\n$flds = 'id I KEY AUTO, name C(255) NOTNULL';\n$sqlarray = $dict->CreateTableSQL(cms_db_prefix().'module_mymod_items', $flds, $taboptarray);\n$dict->ExecuteSQLArray($sqlarray);"
+  },
+  "tags": [
+    "database",
+    "compliance",
+    "install",
+    "portability"
+  ],
+  "version": "1.0",
+  "enabled": true
+}

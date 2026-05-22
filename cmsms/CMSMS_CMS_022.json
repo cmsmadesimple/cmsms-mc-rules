@@ -1,0 +1,36 @@
+{
+  "rule_id": "CMSMS_CMS_022",
+  "title": "Module folder structure missing required files or directories",
+  "category": "cmsms",
+  "severity": "high",
+  "confidence": "high",
+  "score": 7,
+  "description": "The module directory is missing one or more files or directories required by the CMSMS module standard.",
+  "detection": {
+    "type": "heuristic",
+    "patterns": []
+  },
+  "context": [
+    "structure",
+    "compliance"
+  ],
+  "requires": [
+    "module_directory_scan"
+  ],
+  "applies_to": [
+    "module"
+  ],
+  "explanation": "Every CMSMS module must follow a standard folder structure. Required files include the main module class, install/uninstall methods, readme, language file, license, documentation, and an SVG icon. Missing files prevent proper installation, display, and distribution.",
+  "fix": "Create the missing files/directories according to the CMSMS module structure standard.",
+  "examples": {
+    "bad": "modules/MyModule/\n├── MyModule.module.php\n└── lang/en_US.php\n(missing: method.install.php, method.uninstall.php, readme.md, doc/, assets/)",
+    "good": "modules/MyModule/\n├── MyModule.module.php\n├── method.install.php\n├── method.uninstall.php\n├── readme.md\n├── action.defaultadmin.php\n├── assets/ (banners, icons, screenshots)\n├── doc/ (LICENSE, changelog.inc, help.inc)\n├── lang/en_US.php\n├── lib/\n└── templates/"
+  },
+  "tags": [
+    "structure",
+    "compliance",
+    "packaging"
+  ],
+  "version": "1.0",
+  "enabled": true
+}

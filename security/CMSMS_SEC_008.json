@@ -1,0 +1,38 @@
+{
+  "rule_id": "CMSMS_SEC_008",
+  "title": "LIKE clause with concatenated search term",
+  "category": "security",
+  "severity": "medium",
+  "confidence": "high",
+  "description": "A SQL LIKE clause concatenates a variable between % wildcards instead of using a parameterized value.",
+  "detection": {
+    "type": "pattern",
+    "patterns": [
+      "LIKE\\s*[^?]*\\.\\s*\\$\\w+\\s*\\.\\s*['\"]\\s*%?",
+      "LIKE\\s*['\"]%\\{?\\$\\w+\\}?%['\"]"
+    ]
+  },
+  "context": [
+    "sql"
+  ],
+  "requires": [
+    "variable_in_sql_clause"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "LIKE clauses with concatenated variables are injectable. The % wildcards should be prepended/appended to the bound parameter value, not embedded in the SQL string.",
+  "fix": "Use LIKE ? and pass '%' . $search . '%' as the parameter value.",
+  "examples": {
+    "bad": "$db->GetAll('SELECT * FROM ' . CMS_DB_PREFIX . 'items WHERE name LIKE \\'%' . $search . '%\\'');",
+    "good": "$db->GetAll('SELECT * FROM ' . CMS_DB_PREFIX . 'items WHERE name LIKE ?', ['%' . $search . '%']);"
+  },
+  "tags": [
+    "sql",
+    "injection",
+    "db"
+  ],
+  "version": "1.0",
+  "enabled": true,
+  "score": 8
+}

@@ -1,0 +1,39 @@
+{
+  "rule_id": "CMSMS_CMS_005",
+  "title": "echo ProcessTemplate() — deprecated output pattern",
+  "category": "cmsms",
+  "severity": "low",
+  "confidence": "medium",
+  "description": "ProcessTemplate() output is echoed directly instead of using the modern template rendering API. Note: echo $this->ProcessTemplate() is extremely common in CMSMS modules and is functionally correct, just not the modern pattern.",
+  "detection": {
+    "type": "pattern",
+    "patterns": [
+      "echo\\s+\\$(?!this\\b)\\w+\\s*->\\s*ProcessTemplate\\s*\\(",
+      "print\\s+\\$(?!this\\b)\\w+\\s*->\\s*ProcessTemplate\\s*\\("
+    ]
+  },
+  "context": [
+    "template",
+    "api"
+  ],
+  "requires": [
+    "deprecated_template_output"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "echo $this->ProcessTemplate() is the CMSMS 1.x pattern. Modern CMSMS uses ProcessTemplateFromDatabase() or Smarty's fetch() method.",
+  "fix": "Use $smarty->CreateTemplate() + fetch(), or ProcessTemplateFromDatabase().",
+  "examples": {
+    "bad": "echo $this->ProcessTemplate('mytemplate.tpl');",
+    "good": "$tpl = $smarty->CreateTemplate($this->GetTemplateResource('mytemplate.tpl'));\necho $tpl->fetch();"
+  },
+  "tags": [
+    "deprecated",
+    "template",
+    "api"
+  ],
+  "version": "1.0",
+  "enabled": true,
+  "score": 4
+}

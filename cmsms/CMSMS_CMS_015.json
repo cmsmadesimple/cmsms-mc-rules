@@ -1,0 +1,39 @@
+{
+  "rule_id": "CMSMS_CMS_015",
+  "title": "Permission name without module identifier",
+  "category": "cmsms",
+  "severity": "medium",
+  "confidence": "medium",
+  "description": "CreatePermission() or CheckPermission() uses a generic permission name without the module name, risking collision with core or other module permissions.",
+  "detection": {
+    "type": "pattern",
+    "patterns": [
+      "CreatePermission\\s*\\(\\s*['\"](?!(?:Manage|Use|Admin|Modify)\\s+\\w{3,})[a-z_]+['\"]",
+      "CheckPermission\\s*\\(\\s*['\"](?!(?:Manage|Use|Admin|Modify)\\s+\\w{3,})[a-z_]+['\"]"
+    ]
+  },
+  "context": [
+    "naming",
+    "auth"
+  ],
+  "requires": [
+    "generic_permission_name"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "CMSMS permissions are global. A permission named 'edit' or 'admin' will collide. The convention is 'Manage ModuleName' or 'Use ModuleName'.",
+  "fix": "Use the pattern 'Manage ModuleName' or 'Use ModuleName' for permission names.",
+  "examples": {
+    "bad": "CreatePermission('edit', 'Edit items');\nCheckPermission('admin');",
+    "good": "CreatePermission('Manage MyModule', 'Manage MyModule settings');\nCheckPermission('Manage MyModule');"
+  },
+  "tags": [
+    "naming",
+    "permissions",
+    "collision"
+  ],
+  "version": "1.0",
+  "enabled": true,
+  "score": 4
+}

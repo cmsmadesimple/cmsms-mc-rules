@@ -1,0 +1,72 @@
+{
+  "rule_id": "CMSMS_CMS_017",
+  "title": "Smarty variable assigned without module prefix",
+  "category": "cmsms",
+  "severity": "low",
+  "confidence": "low",
+  "description": "A Smarty template variable is assigned with a generic name that could collide with core or other module variables in the shared Smarty scope.",
+  "detection": {
+    "type": "pattern",
+    "patterns": [
+      "->assign\\s*\\(\\s*['\"](?:items|data|results|rows|list|content|title|error|message|status|config|settings|options|output|page|user|count|total|form)\\s*['\"]"
+    ]
+  },
+  "context": [
+    "naming",
+    "template"
+  ],
+  "requires": [
+    "generic_smarty_variable"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "Smarty variables are global scope. Generic names like 'items', 'data', 'title' will be overwritten by other modules or core. Prefix with the module name or action ID.",
+  "fix": "Prefix Smarty variables: $smarty->assign('mymodule_items', $items) or use the $id action prefix.",
+  "examples": {
+    "bad": "$smarty->assign('items', $items);\n$smarty->assign('title', $title);",
+    "good": "$smarty->assign('news_items', $items);\n$tpl->assign('items', $items);  // CreateTemplate scope is isolated"
+  },
+  "exclude_if": [
+    {
+      "type": "regex",
+      "value": "\\$tpl->assign"
+    },
+    {
+      "type": "regex",
+      "value": "\\$tpl_ob->assign"
+    },
+    {
+      "type": "regex",
+      "value": "CreateTemplate"
+    },
+    {
+      "type": "regex",
+      "value": "->Lang\\s*\\("
+    },
+    {
+      "type": "regex",
+      "value": "\\bcount\\s*\\("
+    },
+    {
+      "type": "regex",
+      "value": "\\$this->assign"
+    },
+    {
+      "type": "filename_regex",
+      "value": "^action\\."
+    },
+    {
+      "type": "filename_regex",
+      "value": "^function\\."
+    }
+  ],
+  "tags": [
+    "naming",
+    "template",
+    "collision"
+  ],
+  "version": "1.0",
+  "enabled": true,
+  "score": 2
+}

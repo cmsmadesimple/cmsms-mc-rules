@@ -1,0 +1,77 @@
+{
+  "rule_id": "CMSMS_QUAL_005",
+  "title": "Error suppression operator on I/O or parsing function",
+  "category": "quality",
+  "severity": "medium",
+  "confidence": "high",
+  "description": "The @ operator suppresses errors on file I/O, network, or parsing functions, hiding failures that should be handled explicitly.",
+  "detection": {
+    "type": "pattern",
+    "patterns": [
+      "@(?:file_get_contents|file_put_contents|fopen|fclose|fwrite|fread|unlink|rmdir|rename|copy|chmod)\\s*\\(",
+      "@(?:json_decode|simplexml_load_string|simplexml_load_file|preg_match|preg_replace)\\s*\\(",
+      "@(?:include|require|include_once|require_once)\\s"
+    ]
+  },
+  "context": [
+    "error_handling"
+  ],
+  "requires": [
+    "suppressed_io_error"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "@ silences errors, making failures invisible. A failed unlink or fopen produces no feedback, leading to silent data loss or broken state.",
+  "fix": "Check preconditions (is_file, is_writable) or use try/catch. Handle the error explicitly.",
+  "examples": {
+    "bad": "@unlink($cache_file);\n$data = @file_get_contents($url);",
+    "good": "if (is_file($cache_file)) { unlink($cache_file); }\n$data = file_get_contents($url);\nif ($data === false) { /* handle error */ }"
+  },
+  "exclude_if": [
+    {
+      "type": "regex",
+      "value": "@file_get_contents.*===\\s*false"
+    },
+    {
+      "type": "regex",
+      "value": "@file_put_contents.*===\\s*false"
+    },
+    {
+      "type": "contains",
+      "value": "@mkdir("
+    },
+    {
+      "type": "contains",
+      "value": "@unlink("
+    },
+    {
+      "type": "contains",
+      "value": "@chmod("
+    },
+    {
+      "type": "contains",
+      "value": "@rename("
+    },
+    {
+      "type": "regex",
+      "value": "@file_get_contents\\s*\\(\\s*\\$"
+    },
+    {
+      "type": "regex",
+      "value": "@file_get_contents\\s*\\(\\s*__DIR__"
+    },
+    {
+      "type": "regex",
+      "value": "if\\s*\\(.*file_exists"
+    }
+  ],
+  "tags": [
+    "error-handling",
+    "debugging",
+    "reliability"
+  ],
+  "version": "1.0",
+  "enabled": true,
+  "score": 3
+}

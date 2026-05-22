@@ -1,0 +1,36 @@
+{
+  "rule_id": "CMSMS_CMS_020",
+  "title": "Missing recommended module metadata method",
+  "category": "cmsms",
+  "severity": "medium",
+  "confidence": "high",
+  "score": 4,
+  "description": "The main module class is missing one or more recommended metadata methods that help CMSMS manage and display the module correctly.",
+  "detection": {
+    "type": "heuristic",
+    "patterns": []
+  },
+  "context": [
+    "structure",
+    "metadata"
+  ],
+  "requires": [
+    "missing_metadata_method"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "CMSMS modules should implement metadata methods so the CMS can properly display, manage, and validate the module. Core methods (GetName, GetVersion, GetFriendlyName, GetAuthor, GetAuthorEmail) are essential for identification. Functionality methods (HasAdmin, IsPluginModule, GetDependencies, GetHelp, VisibleToAdminUser) control behavior. Missing GetAuthor() means the module has no identified contributor.",
+  "fix": "Implement the missing metadata methods in your main module class. At minimum: GetName(), GetVersion(), GetFriendlyName(), GetAuthor(), GetAuthorEmail(), GetAdminDescription(), HasAdmin(), IsPluginModule(), MinimumCMSVersion(), GetHelp(), VisibleToAdminUser().",
+  "examples": {
+    "bad": "class MyModule extends CMSModule {\n    function GetName() { return 'MyModule'; }\n    function GetVersion() { return '1.0'; }\n    // Missing: GetAuthor, GetAuthorEmail, GetHelp, etc.\n}",
+    "good": "class MyModule extends CMSModule {\n    function GetName() { return 'MyModule'; }\n    function GetVersion() { return '1.0'; }\n    function GetFriendlyName() { return $this->Lang('friendlyname'); }\n    function GetAuthor() { return 'Your Name'; }\n    function GetAuthorEmail() { return 'you@example.com'; }\n    function GetAdminDescription() { return $this->Lang('description'); }\n    function HasAdmin() { return true; }\n    function IsPluginModule() { return false; }\n    function MinimumCMSVersion() { return '2.2.0'; }\n    function GetHelp() { /* ... */ }\n    function VisibleToAdminUser() { return $this->CheckPermission('Manage MyModule'); }\n    function GetDependencies() { return []; }\n}"
+  },
+  "tags": [
+    "metadata",
+    "structure",
+    "module-class"
+  ],
+  "version": "1.0",
+  "enabled": true
+}

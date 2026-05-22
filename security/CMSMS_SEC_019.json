@@ -1,0 +1,29 @@
+{
+  "rule_id": "CMSMS_SEC_019",
+  "title": "Backtick operator used for shell execution",
+  "category": "security",
+  "severity": "high",
+  "confidence": "high",
+  "description": "The backtick operator executes its contents as a shell command. This is equivalent to shell_exec() and poses the same command injection risks.",
+  "detection": {
+    "type": "pattern",
+    "patterns": [
+      "`[^`]+`"
+    ]
+  },
+  "applies_to": ["php"],
+  "explanation": "Backticks execute shell commands. If any part of the command includes user input, it enables OS command injection. Even without user input, shell execution in modules is discouraged.",
+  "fix": "Remove backtick usage. If shell interaction is truly needed, use escapeshellarg() on all arguments and document why shell access is required.",
+  "examples": {
+    "bad": "$output = `ls -la $dir`;",
+    "good": "$output = []; exec('ls -la ' . escapeshellarg($dir), $output);"
+  },
+  "exclude_if": [
+    { "type": "regex", "value": "^\\s*(\\/\\/|#|\\*)" },
+    { "type": "regex", "value": "preg_match|preg_replace|regex" }
+  ],
+  "tags": ["shell", "command-injection", "backtick"],
+  "version": "1.0",
+  "enabled": true,
+  "score": 10
+}

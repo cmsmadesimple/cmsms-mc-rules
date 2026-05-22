@@ -1,0 +1,28 @@
+{
+  "rule_id": "CMSMS_QUAL_016",
+  "title": "URL shortener link detected",
+  "category": "quality",
+  "severity": "medium",
+  "confidence": "high",
+  "description": "URL shorteners hide the actual destination, making code review impossible and creating a security risk if the shortened URL is redirected to a malicious target.",
+  "detection": {
+    "type": "pattern",
+    "patterns": [
+      "https?:\\/\\/(bit\\.ly|tinyurl\\.com|goo\\.gl|t\\.co|ow\\.ly|is\\.gd|buff\\.ly|adf\\.ly|j\\.mp|surl\\.li|rb\\.gy|cutt\\.ly|shorturl\\.at)\\/"
+    ]
+  },
+  "applies_to": ["php", "tpl"],
+  "explanation": "Shortened URLs can be changed to point anywhere at any time. Use full URLs so reviewers and users can see where links go.",
+  "fix": "Replace the shortened URL with the full destination URL.",
+  "examples": {
+    "bad": "$link = 'https://bit.ly/abc123';",
+    "good": "$link = 'https://docs.cmsmadesimple.org/module-development';"
+  },
+  "exclude_if": [
+    { "type": "regex", "value": "^\\s*(\\/\\/|#|\\*)" }
+  ],
+  "tags": ["url", "transparency", "review"],
+  "version": "1.0",
+  "enabled": true,
+  "score": 5
+}

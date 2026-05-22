@@ -1,0 +1,38 @@
+{
+  "rule_id": "CMSMS_SEC_007",
+  "title": "SQL query with PHP variable interpolation in double-quoted string",
+  "category": "security",
+  "severity": "high",
+  "confidence": "high",
+  "description": "A double-quoted SQL string contains embedded $variable or {$variable} syntax, which PHP interpolates directly into the query.",
+  "detection": {
+    "type": "pattern",
+    "patterns": [
+      "(?:Execute|GetRow|GetOne|GetAll|GetCol|SelectLimit)\\s*\\(\\s*\"[^\"]*(?:WHERE|SET|VALUES|AND|OR)[^\"]*(?:\\$\\w+|\\{\\$\\w+)[^\"]*\"",
+      "(?:Execute|GetRow|GetOne|GetAll|GetCol|SelectLimit)\\s*\\(\\s*\"[^\"]*(?:INSERT|UPDATE|DELETE)[^\"]*\\$\\w+[^\"]*\""
+    ]
+  },
+  "context": [
+    "sql"
+  ],
+  "requires": [
+    "variable_interpolation_in_query"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "PHP interpolates variables inside double-quoted strings before the query reaches the database. This is functionally identical to concatenation-based injection.",
+  "fix": "Switch to single-quoted strings with ? placeholders. Concatenate only CMS_DB_PREFIX.",
+  "examples": {
+    "bad": "$db->Execute(\"UPDATE {$prefix}items SET status = $status WHERE id = $id\");",
+    "good": "$db->Execute('UPDATE ' . CMS_DB_PREFIX . 'items SET status = ? WHERE id = ?', [$status, $id]);"
+  },
+  "tags": [
+    "sql",
+    "injection",
+    "db"
+  ],
+  "version": "1.0",
+  "enabled": true,
+  "score": 10
+}

@@ -1,0 +1,46 @@
+{
+  "rule_id": "CMSMS_SEC_009",
+  "title": "Dynamic ORDER BY or table name from user input",
+  "category": "security",
+  "severity": "high",
+  "confidence": "medium",
+  "description": "A variable is used for ORDER BY column, sort direction, or table name — positions that cannot use ? placeholders.",
+  "detection": {
+    "type": "pattern",
+    "patterns": [
+      "ORDER\\s+BY\\s+['\"]?\\s*['\"]?\\s*\\.\\s*\\$(?:params|_GET|_POST|_REQUEST)\\s*\\[",
+      "(?:FROM|JOIN|INTO|UPDATE)\\s+['\"]?\\s*['\"]?\\s*\\.\\s*\\$(?:params|_GET|_POST|_REQUEST)\\s*\\["
+    ]
+  },
+  "context": [
+    "sql"
+  ],
+  "requires": [
+    "user_input_flow",
+    "unparameterizable_position"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "ORDER BY columns and table names cannot be parameterized with ?. User input in these positions must be validated against an allowlist.",
+  "fix": "Validate against an explicit allowlist of permitted column/table names.",
+  "examples": {
+    "bad": "$db->GetAll('SELECT * FROM ' . CMS_DB_PREFIX . 'items ORDER BY ' . $params['sort']);",
+    "good": "$allowed_cols = ['name', 'created', 'id'];\n$sort = in_array($params['sort'] ?? '', $allowed_cols, true) ? $params['sort'] : 'id';\n$db->GetAll('SELECT * FROM ' . CMS_DB_PREFIX . 'items ORDER BY ' . $sort);"
+  },
+  "exclude_if": [
+    {
+      "type": "contains",
+      "value": "in_array("
+    }
+  ],
+  "tags": [
+    "sql",
+    "injection",
+    "db",
+    "input"
+  ],
+  "version": "1.0",
+  "enabled": true,
+  "score": 9
+}

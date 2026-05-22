@@ -1,0 +1,41 @@
+{
+  "rule_id": "CMSMS_SEC_013",
+  "title": "Frontend form submission handler without CSRF validation",
+  "category": "security",
+  "severity": "medium",
+  "confidence": "medium",
+  "score": 5,
+  "description": "A frontend action processes a form submit and performs a state-changing operation without CSRF token validation. Admin actions are excluded because the CMSMS admin framework handles CSRF protection automatically.",
+  "detection": {
+    "type": "heuristic",
+    "patterns": []
+  },
+  "context": [
+    "auth"
+  ],
+  "requires": [
+    "state_changing_operation",
+    "missing_csrf_check"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "exclude_filenames": [
+    "action.admin",
+    "action.defaultadmin",
+    "function.admin_"
+  ],
+  "explanation": "Frontend state-changing operations triggered by form submission without CSRF token validation are vulnerable to Cross-Site Request Forgery. Admin actions are excluded because CMSMS handles admin CSRF protection at the framework level. For frontend forms, the CMSMSExt module offers a robust CSRF solution.",
+  "fix": "Install the CMSMSExt module. In templates, add {xt_form_csrf} inside your form: {form_start}{xt_form_csrf}. In the action handler, validate with: if(!\\xt_utils::valid_form_csrf()) { throw new Exception($this->Lang('error_security')); }. This is recommended best practice but not mandatory.",
+  "examples": {
+    "bad": "if (isset($params['submit'])) {\n    $db->Execute('DELETE FROM items WHERE id = ?', [$params['id']]);\n}",
+    "good": "{* In template: *}\n{form_start}{xt_form_csrf}\n...\n{form_end}\n\n// In action handler:\nif(!\\xt_utils::valid_form_csrf()) {\n    throw new Exception($this->Lang('error_security'));\n}\n$db->Execute('DELETE FROM items WHERE id = ?', [(int)$params['id']]);"
+  },
+  "tags": [
+    "csrf",
+    "auth",
+    "state-change"
+  ],
+  "version": "1.0",
+  "enabled": true
+}

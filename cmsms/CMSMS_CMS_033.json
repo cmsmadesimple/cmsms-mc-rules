@@ -1,0 +1,38 @@
+{
+  "rule_id": "CMSMS_CMS_033",
+  "title": "Deprecated GetNotificationOutput() method",
+  "category": "cmsms",
+  "severity": "medium",
+  "confidence": "high",
+  "description": "Module implements GetNotificationOutput() which was removed in CMSMS 2.2. Use the Admin Alerts system instead.",
+  "detection": {
+    "type": "pattern",
+    "patterns": [
+      "function\\s+GetNotificationOutput\\s*\\("
+    ]
+  },
+  "context": [
+    "api",
+    "deprecated"
+  ],
+  "requires": [
+    "deprecated_notification_method"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "GetNotificationOutput() was removed in CMSMS 2.2. The old notification system was replaced with the Admin Alerts classes (CmsAdminAlert).",
+  "fix": "Remove GetNotificationOutput(). Use the Admin Alerts API: create a class extending CmsAdminAlert and register it.",
+  "examples": {
+    "bad": "function GetNotificationOutput() { return 'You have 3 pending items'; }",
+    "good": "// Use Admin Alerts instead:\n// Create a class extending CmsAdminAlert\n// Register via alert_manager::load_alerts()"
+  },
+  "tags": [
+    "deprecated",
+    "api",
+    "notifications"
+  ],
+  "version": "1.0",
+  "enabled": true,
+  "score": 5
+}

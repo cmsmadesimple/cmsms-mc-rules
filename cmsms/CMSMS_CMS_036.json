@@ -1,0 +1,41 @@
+{
+  "rule_id": "CMSMS_CMS_036",
+  "title": "Dependency on removed core module MenuManager",
+  "category": "cmsms",
+  "severity": "high",
+  "confidence": "high",
+  "description": "Code references MenuManager which was removed from the CMSMS core in version 2.2.22. Use Navigator instead.",
+  "detection": {
+    "type": "pattern",
+    "patterns": [
+      "\\{MenuManager\\b",
+      "get_module\\s*\\(\\s*['\"]MenuManager['\"]",
+      "GetDependencies[^}]*MenuManager"
+    ]
+  },
+  "context": [
+    "deprecated",
+    "dependencies"
+  ],
+  "requires": [
+    "removed_module_reference"
+  ],
+  "applies_to": [
+    "php",
+    "tpl"
+  ],
+  "explanation": "MenuManager was removed from the CMSMS core package in version 2.2.22. It was replaced by Navigator. Templates using {MenuManager} will break on fresh installs.",
+  "fix": "Replace {MenuManager} with {Navigator} in templates. Update GetDependencies() to reference Navigator instead.",
+  "examples": {
+    "bad": "{MenuManager action='default' template='simple_navigation'}",
+    "good": "{Navigator action='default' template='simple_navigation'}"
+  },
+  "tags": [
+    "deprecated",
+    "removed",
+    "navigation"
+  ],
+  "version": "1.0",
+  "enabled": true,
+  "score": 7
+}

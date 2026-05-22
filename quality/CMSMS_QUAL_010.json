@@ -1,0 +1,35 @@
+{
+  "rule_id": "CMSMS_QUAL_010",
+  "title": "Catch block that silently swallows exception",
+  "category": "quality",
+  "severity": "medium",
+  "confidence": "high",
+  "description": "A catch block has an empty body or only contains a comment, silently discarding the exception.",
+  "detection": {
+    "type": "heuristic",
+    "patterns": []
+  },
+  "context": [
+    "error_handling"
+  ],
+  "requires": [
+    "empty_catch_block"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "Empty catch blocks hide failures. The code continues in an unexpected state, making bugs extremely hard to diagnose.",
+  "fix": "At minimum, log the exception. Better: handle it or let it propagate.",
+  "examples": {
+    "bad": "try {\n    $result = $db->Execute($query, $params);\n} catch (Exception $e) {\n    // ignore\n}",
+    "good": "try {\n    $result = $db->Execute($query, $params);\n} catch (Exception $e) {\n    audit($this->GetName() . ': DB error: ' . $e->getMessage());\n    $this->SetError($this->Lang('error_db_operation'));\n}"
+  },
+  "tags": [
+    "error-handling",
+    "reliability",
+    "debugging"
+  ],
+  "version": "1.0",
+  "enabled": true,
+  "score": 3
+}

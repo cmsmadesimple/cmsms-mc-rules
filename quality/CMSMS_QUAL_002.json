@@ -1,0 +1,39 @@
+{
+  "rule_id": "CMSMS_QUAL_002",
+  "title": "Large inline <style> block in template",
+  "category": "quality",
+  "severity": "low",
+  "confidence": "high",
+  "description": "A template contains a <style> block with 50+ characters of CSS, indicating styles that should be in an external stylesheet.",
+  "detection": {
+    "type": "pattern",
+    "patterns": [
+      "<style[^>]*>[^<]{50,}</style>"
+    ]
+  },
+  "context": [
+    "output",
+    "separation_of_concerns"
+  ],
+  "requires": [
+    "inline_style_block"
+  ],
+  "applies_to": [
+    "tpl",
+    "php"
+  ],
+  "explanation": "Large inline CSS blocks prevent browser caching, increase page weight on every request, and make styling inconsistent across module views.",
+  "fix": "Move to a .css file in assets/ and load via $this->AddHeaderCSS() or a <link> tag.",
+  "examples": {
+    "bad": "<style>\n.mymod-table { width: 100%; border-collapse: collapse; }\n.mymod-table th { background: #f5f5f5; padding: 8px; }\n.mymod-table td { padding: 8px; border-bottom: 1px solid #ddd; }\n</style>",
+    "good": "{* In assets/admin.css *}\n<link rel=\"stylesheet\" href=\"{$module_url}/assets/admin.css\">"
+  },
+  "tags": [
+    "css",
+    "separation-of-concerns",
+    "caching"
+  ],
+  "version": "1.0",
+  "enabled": true,
+  "score": 2
+}

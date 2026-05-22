@@ -1,0 +1,44 @@
+{
+  "rule_id": "CMSMS_QUAL_011",
+  "title": "Deprecated PHP function used",
+  "category": "quality",
+  "severity": "medium",
+  "confidence": "high",
+  "score": 4,
+  "description": "The file uses a PHP function that has been deprecated or removed in modern PHP versions.",
+  "detection": {
+    "type": "pattern",
+    "patterns": [
+      "\\bsplit\\s*\\(",
+      "\\bereg[i]?\\s*\\(",
+      "\\bereg[i]?_replace\\s*\\(",
+      "\\bmysql_\\w+\\s*\\(",
+      "\\beach\\s*\\(",
+      "\\bcreate_function\\s*\\(",
+      "\\bmcrypt_\\w+\\s*\\("
+    ]
+  },
+  "context": [
+    "deprecated",
+    "compatibility"
+  ],
+  "requires": [
+    "deprecated_function_call"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "These functions are deprecated or removed in PHP 7.x/8.x. split() was removed in PHP 7.0 (use explode or preg_split). ereg functions were removed in PHP 7.0 (use preg_match/preg_replace). mysql_* was removed in PHP 7.0 (use CMSMS database API). each() was deprecated in PHP 7.2. create_function() was deprecated in PHP 7.2 (use closures). mcrypt_* was removed in PHP 7.2 (use openssl).",
+  "fix": "Replace with the modern equivalent: split() -> explode()/preg_split(), ereg -> preg_match(), mysql_* -> cms_utils::get_db(), each() -> foreach, create_function() -> fn() or closure, mcrypt_* -> openssl_*.",
+  "examples": {
+    "bad": "$parts = split(',', $str);\nif (ereg('^[a-z]+$', $input)) { ... }\nmysql_query('SELECT * FROM items');",
+    "good": "$parts = explode(',', $str);\nif (preg_match('/^[a-z]+$/', $input)) { ... }\n$db = cms_utils::get_db();\n$db->GetAll('SELECT * FROM ' . CMS_DB_PREFIX . 'items');"
+  },
+  "tags": [
+    "deprecated",
+    "compatibility",
+    "php"
+  ],
+  "version": "1.0",
+  "enabled": true
+}

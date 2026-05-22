@@ -1,0 +1,28 @@
+{
+  "rule_id": "CMSMS_QUAL_017",
+  "title": "Heredoc syntax with variable interpolation",
+  "category": "quality",
+  "severity": "medium",
+  "confidence": "medium",
+  "description": "Heredoc strings (<<<) interpolate variables like double-quoted strings. In SQL or HTML contexts this creates injection risks that are harder to spot than regular string concatenation.",
+  "detection": {
+    "type": "pattern",
+    "patterns": [
+      "<<<\\s*['\"]?\\w+['\"]?\\s*$"
+    ]
+  },
+  "applies_to": ["php"],
+  "explanation": "Heredoc syntax interpolates PHP variables, making it easy to accidentally inject unsanitized values into SQL or HTML. Use parameterized queries for SQL and Smarty templates for HTML output.",
+  "fix": "For SQL, use parameterized queries with ? placeholders. For HTML, use Smarty templates. If heredoc is needed for static text, use nowdoc (<<<'EOT') which does not interpolate.",
+  "examples": {
+    "bad": "$sql = <<<SQL\nSELECT * FROM {$table} WHERE id = {$id}\nSQL;",
+    "good": "$sql = 'SELECT * FROM ' . CMS_DB_PREFIX . 'mod_items WHERE id = ?';"
+  },
+  "exclude_if": [
+    { "type": "regex", "value": "^\\s*(\\/\\/|#|\\*)" }
+  ],
+  "tags": ["interpolation", "injection", "heredoc"],
+  "version": "1.0",
+  "enabled": true,
+  "score": 5
+}

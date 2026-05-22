@@ -1,0 +1,48 @@
+{
+  "rule_id": "CMSMS_SEC_003",
+  "title": "User input flows into file path operation",
+  "category": "security",
+  "severity": "high",
+  "confidence": "high",
+  "description": "A superglobal or $params value is used to construct a file path for read/write/delete without traversal protection.",
+  "detection": {
+    "type": "pattern",
+    "patterns": [
+      "(?:file_get_contents|file_put_contents|fopen|readfile|unlink|copy|rename|is_file|is_dir|file_exists)\\s*\\([^)]*\\$_(GET|POST|REQUEST)\\s*\\[",
+      "(?:file_get_contents|file_put_contents|fopen|readfile|unlink|copy|rename)\\s*\\([^)]*\\$params\\s*\\["
+    ]
+  },
+  "context": [
+    "file_path"
+  ],
+  "requires": [
+    "user_input_flow"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "User-controlled path segments enable directory traversal (../) to read/write/delete arbitrary files on the server.",
+  "fix": "Use basename() to strip path components, or realpath() + str_starts_with() to verify the resolved path stays within the allowed directory.",
+  "examples": {
+    "bad": "$content = file_get_contents($upload_dir . '/' . $params['filename']);",
+    "good": "$safe = basename($params['filename'] ?? '');\n$path = realpath($upload_dir . '/' . $safe);\nif ($path && str_starts_with($path, realpath($upload_dir))) {\n    $content = file_get_contents($path);\n}"
+  },
+  "exclude_if": [
+    {
+      "type": "contains",
+      "value": "realpath("
+    },
+    {
+      "type": "contains",
+      "value": "basename("
+    }
+  ],
+  "tags": [
+    "path-traversal",
+    "file",
+    "input"
+  ],
+  "version": "1.0",
+  "enabled": true,
+  "score": 10
+}

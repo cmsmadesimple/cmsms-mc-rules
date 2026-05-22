@@ -1,0 +1,35 @@
+{
+  "rule_id": "CMSMS_CMS_010",
+  "title": "Module uses another module without GetDependencies()",
+  "category": "cmsms",
+  "severity": "low",
+  "confidence": "medium",
+  "description": "Code calls cms_utils::get_module() or ModuleOperations to load another module, but the module class likely doesn't declare it in GetDependencies().",
+  "detection": {
+    "type": "heuristic",
+    "patterns": []
+  },
+  "context": [
+    "dependencies"
+  ],
+  "requires": [
+    "cross_module_reference"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "Loading another module at runtime without declaring the dependency in GetDependencies() means CMSMS can't enforce load order or warn when the dependency is missing.",
+  "fix": "Add the module to GetDependencies() with its minimum required version.",
+  "examples": {
+    "bad": "$news = cms_utils::get_module('News');\n$news->DoSomething();",
+    "good": "// In module class:\npublic function GetDependencies() { return ['News' => '2.50']; }\n// Then:\n$news = cms_utils::get_module('News');"
+  },
+  "tags": [
+    "dependencies",
+    "structure",
+    "load-order"
+  ],
+  "version": "1.0",
+  "enabled": true,
+  "score": 3
+}

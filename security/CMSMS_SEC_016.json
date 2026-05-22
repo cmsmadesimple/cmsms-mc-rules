@@ -1,0 +1,37 @@
+{
+  "rule_id": "CMSMS_SEC_016",
+  "title": "preg_replace with /e modifier on user input",
+  "category": "security",
+  "severity": "high",
+  "confidence": "high",
+  "score": 10,
+  "description": "preg_replace() uses the /e modifier which evaluates the replacement as PHP code.",
+  "detection": {
+    "type": "pattern",
+    "patterns": [
+      "preg_replace\\s*\\(\\s*['\"][^'\"]*\\/[a-z]*e[a-z]*['\"]\\s*,\\s*[^,]*\\$"
+    ]
+  },
+  "context": [
+    "code_execution"
+  ],
+  "requires": [
+    "eval_modifier_with_variable"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "The /e modifier in preg_replace() evaluates the replacement string as PHP code. With user-controlled input, this is RCE.",
+  "fix": "Replace with preg_replace_callback() which uses a proper callable instead of eval.",
+  "examples": {
+    "bad": "preg_replace('/\\{(\\w+)\\}/e', '$data[\"$1\"]', $params['template']);",
+    "good": "preg_replace_callback('/\\{(\\w+)\\}/', fn($m) => htmlspecialchars($data[$m[1]] ?? ''), $params['template']);"
+  },
+  "tags": [
+    "rce",
+    "regex",
+    "deprecated"
+  ],
+  "version": "1.0",
+  "enabled": true
+}

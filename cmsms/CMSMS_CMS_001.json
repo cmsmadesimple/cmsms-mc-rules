@@ -1,0 +1,48 @@
+{
+  "rule_id": "CMSMS_CMS_001",
+  "title": "Module table without mod_ or module_ prefix after CMS_DB_PREFIX",
+  "category": "cmsms",
+  "severity": "medium",
+  "confidence": "high",
+  "description": "A SQL query references CMS_DB_PREFIX concatenated with a table name that doesn't follow the mod_<name> or module_<name>_ convention, risking collision with core tables.",
+  "detection": {
+    "type": "pattern",
+    "patterns": [
+      "CMS_DB_PREFIX\\s*\\.\\s*['\"](?!mod(?:ule)?_)[a-z_]+['\"]"
+    ]
+  },
+  "context": [
+    "sql",
+    "naming"
+  ],
+  "requires": [
+    "custom_table_reference"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "CMSMS reserves unprefixed table names for core. Module tables must use mod_<modulename>_ (preferred) or module_<modulename>_ to avoid collisions and make ownership clear.",
+  "fix": "Rename tables to mod_<yourmodule>_<tablename>. The module_ prefix is also accepted for backward compatibility.",
+  "examples": {
+    "bad": "$db->GetAll('SELECT * FROM ' . CMS_DB_PREFIX . 'custom_items');",
+    "good": "$db->GetAll('SELECT * FROM ' . CMS_DB_PREFIX . 'mod_mymod_items');"
+  },
+  "exclude_if": [
+    {
+      "type": "regex",
+      "value": "CMS_DB_PREFIX\\s*\\.\\s*['\"](?:content|content_props|users|groups|group_perms|permissions|events|routes|siteprefs|userplugins|layout|additional_users|admin_bookmarks|css|htmlblob|templates|user_groups|version)"
+    },
+    {
+      "type": "regex",
+      "value": "CMS_DB_PREFIX\\s*\\.\\s*['\"]\\w+_seq"
+    }
+  ],
+  "tags": [
+    "naming",
+    "database",
+    "convention"
+  ],
+  "version": "1.1",
+  "enabled": true,
+  "score": 5
+}

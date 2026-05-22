@@ -1,0 +1,40 @@
+{
+  "rule_id": "CMSMS_QUAL_004",
+  "title": "Database access in Smarty template",
+  "category": "quality",
+  "severity": "high",
+  "confidence": "high",
+  "description": "A .tpl template file contains database method calls, violating MVC separation.",
+  "detection": {
+    "type": "pattern",
+    "patterns": [
+      "\\$db\\s*->\\s*(?:Execute|GetRow|GetOne|GetAll|GetCol|SelectLimit)\\s*\\(",
+      "cmsms\\s*\\(\\s*\\)\\s*->\\s*GetDb\\s*\\(",
+      "CmsApp::get_instance\\s*\\(\\s*\\)\\s*->\\s*GetDb"
+    ]
+  },
+  "context": [
+    "separation_of_concerns",
+    "sql"
+  ],
+  "requires": [
+    "db_access_in_template"
+  ],
+  "applies_to": [
+    "tpl"
+  ],
+  "explanation": "Templates are the view layer. Database access in templates makes debugging impossible, creates security risks, and prevents template caching.",
+  "fix": "Move all queries to the action file. Pass results to the template via $smarty->assign().",
+  "examples": {
+    "bad": "{php}\n$db = cmsms()->GetDb();\n$rows = $db->GetAll('SELECT * FROM ' . CMS_DB_PREFIX . 'items');\n{/php}",
+    "good": "{foreach $items as $item}\n  <li>{$item.name|escape}</li>\n{/foreach}"
+  },
+  "tags": [
+    "separation-of-concerns",
+    "mvc",
+    "template"
+  ],
+  "version": "1.0",
+  "enabled": true,
+  "score": 6
+}

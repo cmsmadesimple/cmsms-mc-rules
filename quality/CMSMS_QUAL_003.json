@@ -1,0 +1,36 @@
+{
+  "rule_id": "CMSMS_QUAL_003",
+  "title": "Database query inside a loop body",
+  "category": "quality",
+  "severity": "medium",
+  "confidence": "high",
+  "description": "A database query method (GetRow, GetOne, GetAll, Execute) is called inside a foreach/while/for loop, causing N+1 query performance problems.",
+  "detection": {
+    "type": "heuristic",
+    "patterns": []
+  },
+  "context": [
+    "performance",
+    "sql"
+  ],
+  "requires": [
+    "query_in_loop"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "Each loop iteration fires a separate DB round-trip. For 100 items, that's 100 queries instead of 1. This is the classic N+1 problem.",
+  "fix": "Fetch all needed data in a single query before the loop using IN (...) or a JOIN.",
+  "examples": {
+    "bad": "foreach ($category_ids as $cid) {\n    $items = $db->GetAll('SELECT * FROM ' . CMS_DB_PREFIX . 'module_mymod_items WHERE cat_id = ?', [$cid]);\n}",
+    "good": "$ph = implode(',', array_fill(0, count($category_ids), '?'));\n$items = $db->GetAll('SELECT * FROM ' . CMS_DB_PREFIX . \"module_mymod_items WHERE cat_id IN ($ph)\", $category_ids);"
+  },
+  "tags": [
+    "performance",
+    "database",
+    "n+1"
+  ],
+  "version": "1.0",
+  "enabled": true,
+  "score": 4
+}

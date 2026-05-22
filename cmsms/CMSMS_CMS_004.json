@@ -1,0 +1,37 @@
+{
+  "rule_id": "CMSMS_CMS_004",
+  "title": "Deprecated global $gCms for database access",
+  "category": "cmsms",
+  "severity": "medium",
+  "confidence": "high",
+  "description": "Code uses 'global $gCms' followed by $gCms->GetDb() instead of the modern cmsms() accessor.",
+  "detection": {
+    "type": "pattern",
+    "patterns": [
+      "global\\s+\\$gCms\\b[^}]*\\$gCms\\s*->\\s*GetDb\\s*\\(",
+      "\\$gCms\\s*->\\s*(?:GetDb|GetConfig|GetSmarty)\\s*\\("
+    ]
+  },
+  "context": [
+    "api"
+  ],
+  "requires": [
+    "deprecated_global_accessor"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "The global $gCms pattern is deprecated since CMSMS 2.0. It pollutes scope and breaks in future versions. Use cmsms() or CmsApp::get_instance().",
+  "fix": "Replace with $db = cmsms()->GetDb();",
+  "examples": {
+    "bad": "global $gCms;\n$db = $gCms->GetDb();\n$config = $gCms->GetConfig();",
+    "good": "$db = cmsms()->GetDb();\n$config = cmsms()->GetConfig();"
+  },
+  "tags": [
+    "deprecated",
+    "api"
+  ],
+  "version": "1.0",
+  "enabled": true,
+  "score": 5
+}

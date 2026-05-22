@@ -1,0 +1,37 @@
+{
+  "rule_id": "CMSMS_QUAL_006",
+  "title": "Action file mixes DB queries with HTML echo",
+  "category": "quality",
+  "severity": "medium",
+  "confidence": "high",
+  "description": "A single action file both executes database queries and echoes HTML markup, violating separation of concerns.",
+  "detection": {
+    "type": "pattern",
+    "patterns": [
+      "(?:GetAll|GetRow|Execute)\\s*\\([^)]+\\)[\\s\\S]{0,500}(?:echo|print)\\s+['\"]<(?:div|table|form|tr|ul|ol|h[1-6])"
+    ]
+  },
+  "context": [
+    "separation_of_concerns"
+  ],
+  "requires": [
+    "mixed_data_and_presentation"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "Mixing data access and HTML rendering in one file makes both untestable, prevents template overrides, and creates maintenance burden.",
+  "fix": "Keep the action file for data logic only. Assign results to $smarty and render via a .tpl template.",
+  "examples": {
+    "bad": "$rows = $db->GetAll('SELECT * FROM items');\necho '<table>';\nforeach ($rows as $r) { echo '<tr><td>' . $r['name'] . '</td></tr>'; }\necho '</table>';",
+    "good": "$rows = $db->GetAll('SELECT * FROM items');\n$tpl->assign('items', $rows);\necho $tpl->fetch();"
+  },
+  "tags": [
+    "separation-of-concerns",
+    "mvc",
+    "maintainability"
+  ],
+  "version": "1.0",
+  "enabled": true,
+  "score": 4
+}

@@ -1,0 +1,36 @@
+{
+  "rule_id": "CMSMS_QUAL_013",
+  "title": "Form submit handler without POST-Redirect-Get pattern",
+  "category": "quality",
+  "severity": "medium",
+  "confidence": "medium",
+  "score": 4,
+  "description": "An action file handles a form submission (checks for $params['submit']) but does not redirect afterward, violating the Post-Redirect-Get pattern and causing duplicate submissions on browser refresh.",
+  "detection": {
+    "type": "heuristic",
+    "patterns": []
+  },
+  "context": [
+    "prg",
+    "forms"
+  ],
+  "requires": [
+    "submit_without_redirect"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "When a user submits a form and the action processes it without redirecting, refreshing the page will re-submit the form. The PRG (Post-Redirect-Get) pattern prevents this by redirecting after processing. In CMSMS, use $this->RedirectToAdminTab() after handling POST data.",
+  "fix": "After processing the form submission, redirect: $this->SetMessage($this->Lang('item_saved')); $this->RedirectToAdminTab();",
+  "examples": {
+    "bad": "if (isset($params['submit'])) {\n    $db->Execute('INSERT INTO ...', [...]);\n    // no redirect - refresh will re-insert\n}",
+    "good": "if (isset($params['submit'])) {\n    $db->Execute('INSERT INTO ...', [...]);\n    $this->SetMessage($this->Lang('item_saved'));\n    $this->RedirectToAdminTab();\n}"
+  },
+  "tags": [
+    "prg",
+    "forms",
+    "ux"
+  ],
+  "version": "1.0",
+  "enabled": true
+}

@@ -1,0 +1,51 @@
+{
+  "rule_id": "CMSMS_SEC_014",
+  "title": "Hardcoded credential assigned to variable",
+  "category": "security",
+  "severity": "high",
+  "confidence": "medium",
+  "score": 8,
+  "description": "A variable named password, secret, api_key, or token is assigned a literal string value of 8+ characters.",
+  "detection": {
+    "type": "pattern",
+    "patterns": [
+      "\\$(?:password|passwd|secret|api_?key|auth_?token|private_?key|access_?token)\\s*=\\s*['\"][^'\"]{8,}['\"]"
+    ]
+  },
+  "context": [
+    "credentials"
+  ],
+  "requires": [
+    "literal_secret_assignment"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "Hardcoded secrets in source code are exposed in version control and cannot be rotated without deployment.",
+  "fix": "Store in CMSMS site preferences via cms_siteprefs::get(), environment variables, or config.php.",
+  "examples": {
+    "bad": "$api_key = 'sk_live_4eC39HqLyjWDarjtT1zdp7dc';",
+    "good": "$api_key = cms_siteprefs::get('mymodule_api_key', '');"
+  },
+  "exclude_if": [
+    {
+      "type": "contains",
+      "value": "getenv("
+    },
+    {
+      "type": "contains",
+      "value": "cms_siteprefs::get("
+    },
+    {
+      "type": "contains",
+      "value": "GetPreference("
+    }
+  ],
+  "tags": [
+    "credentials",
+    "secrets",
+    "config"
+  ],
+  "version": "1.0",
+  "enabled": true
+}

@@ -1,0 +1,53 @@
+{
+  "rule_id": "CMSMS_SEC_011",
+  "title": "unserialize() on external or variable data",
+  "category": "security",
+  "severity": "high",
+  "confidence": "high",
+  "score": 10,
+  "description": "unserialize() is called on a variable without allowed_classes restriction, enabling PHP Object Injection.",
+  "detection": {
+    "type": "pattern",
+    "patterns": [
+      "\\bunserialize\\s*\\(\\s*\\$_(GET|POST|REQUEST|COOKIE)\\s*\\[",
+      "\\bunserialize\\s*\\(\\s*\\$params\\s*\\[",
+      "\\bunserialize\\s*\\(\\s*\\$\\w+"
+    ]
+  },
+  "context": [
+    "code_execution"
+  ],
+  "requires": [
+    "untrusted_deserialization"
+  ],
+  "applies_to": [
+    "php"
+  ],
+  "explanation": "unserialize() instantiates objects and triggers magic methods (__wakeup, __destruct). With user-controlled data, attackers chain gadgets for RCE.",
+  "fix": "Use json_decode() for data interchange. If unserialize() is required, restrict: unserialize($data, ['allowed_classes' => false]).",
+  "examples": {
+    "bad": "$settings = unserialize($params['config']);",
+    "good": "$settings = json_decode($params['config'] ?? '{}', true, 512, JSON_THROW_ON_ERROR);"
+  },
+  "exclude_if": [
+    {
+      "type": "contains",
+      "value": "allowed_classes"
+    },
+    {
+      "type": "regex",
+      "value": "array_map\\s*\\(\\s*['\"]unserialize['\"]"
+    },
+    {
+      "type": "regex",
+      "value": "GetPreference|GetOne|GetRow|get_site_preference"
+    }
+  ],
+  "tags": [
+    "deserialization",
+    "rce",
+    "object-injection"
+  ],
+  "version": "1.0",
+  "enabled": true
+}
