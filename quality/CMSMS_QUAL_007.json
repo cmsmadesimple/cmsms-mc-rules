@@ -1,10 +1,10 @@
 {
   "rule_id": "CMSMS_QUAL_007",
-  "title": "Deeply nested control structures (4+ levels)",
+  "title": "Deeply nested control structures (5+ levels)",
   "category": "quality",
   "severity": "medium",
   "confidence": "medium",
-  "description": "Four or more levels of nested if/for/foreach/while blocks, indicating high cyclomatic complexity.",
+  "description": "Five or more levels of nested if/for/foreach/while blocks within a single function, indicating high cyclomatic complexity.",
   "detection": {
     "type": "pattern",
     "patterns": [

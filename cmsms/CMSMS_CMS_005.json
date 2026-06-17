@@ -28,6 +28,9 @@
     "bad": "echo $this->ProcessTemplate('mytemplate.tpl');",
     "good": "$tpl = $smarty->CreateTemplate($this->GetTemplateResource('mytemplate.tpl'));\necho $tpl->fetch();"
   },
+  "exclude_if": [
+    { "type": "contains", "value": "$lang[" }
+  ],
   "tags": [
     "deprecated",
     "template",
