@@ -32,6 +32,14 @@
     {
       "type": "regex",
       "value": "\\?[^.]*,\\s*\\["
+    },
+    {
+      "type": "regex",
+      "value": "^\\s*(?:audit|error_log|trigger_error|log_|debug)\\s*\\("
+    },
+    {
+      "type": "regex",
+      "value": "(?:audit|error_log|trigger_error)\\s*\\([^)]*\\."
     }
   ],
   "tags": [
