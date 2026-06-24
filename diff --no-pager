@@ -1,0 +1,41 @@
+[1mdiff --git a/security/CMSMS_SEC_004.json b/security/CMSMS_SEC_004.json[m
+[1mindex b681459..717846f 100644[m
+[1m--- a/security/CMSMS_SEC_004.json[m
+[1m+++ b/security/CMSMS_SEC_004.json[m
+[36m@@ -43,6 +43,10 @@[m
+     {[m
+       "type": "regex",[m
+       "value": "getModulePath|GetModulePath"[m
+[32m+[m[32m    },[m
+[32m+[m[32m    {[m
+[32m+[m[32m      "type": "contains",[m
+[32m+[m[32m      "value": "SetPreference("[m
+     }[m
+   ],[m
+   "tags": [[m
+[1mdiff --git a/security/CMSMS_SEC_006.json b/security/CMSMS_SEC_006.json[m
+[1mindex 9a205d1..ec3081f 100644[m
+[1m--- a/security/CMSMS_SEC_006.json[m
+[1m+++ b/security/CMSMS_SEC_006.json[m
+[36m@@ -37,6 +37,10 @@[m
+       "type": "regex",[m
+       "value": "^\\s*(?:audit|error_log|trigger_error|log_|debug)\\s*\\("[m
+     },[m
+[32m+[m[32m    {[m
+[32m+[m[32m      "type": "regex",[m
+[32m+[m[32m      "value": "isset\\s*\\("[m
+[32m+[m[32m    },[m
+     {[m
+       "type": "regex",[m
+       "value": "(?:audit|error_log|trigger_error)\\s*\\([^)]*\\."[m
+[1mdiff --git a/version.json b/version.json[m
+[1mindex 765b2a3..65d39ec 100644[m
+[1m--- a/version.json[m
+[1m+++ b/version.json[m
+[36m@@ -1,4 +1,4 @@[m
+ {[m
+[31m-  "version": "1.0.3",[m
+[31m-  "updated": "2026-06-22"[m
+[32m+[m[32m  "version": "1.0.4",[m
+[32m+[m[32m  "updated": "2026-06-23"[m
+ }[m

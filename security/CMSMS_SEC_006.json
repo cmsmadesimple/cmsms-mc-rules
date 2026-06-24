@@ -39,6 +39,10 @@
     },
     {
       "type": "regex",
+      "value": "isset\\s*\\("
+    },
+    {
+      "type": "regex",
       "value": "(?:audit|error_log|trigger_error)\\s*\\([^)]*\\."
     }
   ],

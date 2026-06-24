@@ -43,6 +43,10 @@
     {
       "type": "regex",
       "value": "getModulePath|GetModulePath"
+    },
+    {
+      "type": "contains",
+      "value": "SetPreference("
     }
   ],
   "tags": [
