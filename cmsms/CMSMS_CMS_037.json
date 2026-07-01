@@ -1,0 +1,18 @@
+{
+  "rule_id": "CMSMS_CMS_037",
+  "title": "Undeclared hard dependency on another module",
+  "note": "Superseded by Check_Dependencies PHP class (v1.3.0). Kept as placeholder to reserve the rule_id.",
+  "category": "cmsms",
+  "severity": "high",
+  "confidence": "medium",
+  "description": "Code uses require/require_once/include/include_once to load files from another module's directory, or calls GetModuleInstance()/get_module() without a null check. If the referenced module is not installed and not declared in GetDependencies(), this causes a fatal error at runtime.",
+  "detection": {
+    "type": "pattern",
+    "patterns": []
+  },
+  "applies_to": ["php"],
+  "tags": ["dependencies", "fatal-error", "require", "module-loading"],
+  "version": "1.0",
+  "enabled": false,
+  "score": 8
+}
