@@ -19,7 +19,8 @@
     "good": "$sql = 'SELECT * FROM ' . CMS_DB_PREFIX . 'mod_items WHERE id = ?';"
   },
   "exclude_if": [
-    { "type": "regex", "value": "^\\s*(\\/\\/|#|\\*)" }
+    { "type": "regex", "value": "^\\s*(\\/\\/|#|\\*)" },
+    { "type": "regex", "value": "<<<\\s*'\\w+'" }
   ],
   "tags": ["interpolation", "injection", "heredoc"],
   "version": "1.0",

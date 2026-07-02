@@ -23,7 +23,8 @@
     { "type": "regex", "value": "preg_match|preg_replace|regex" },
     { "type": "contains", "value": "str_replace('`'" },
     { "type": "regex", "value": "return\\s+['\"]`['\"]" },
-    { "type": "regex", "value": "\\.\\.\\s*['\"]`['\"]" }
+    { "type": "regex", "value": "\\.\\.\\s*['\"]`['\"]" },
+    { "type": "regex", "value": "^[^$]*$" }
   ],
   "tags": ["shell", "command-injection", "backtick"],
   "version": "1.0",
